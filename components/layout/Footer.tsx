@@ -1,14 +1,22 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { Building2, Phone, Mail, MapPin, ArrowRight, ArrowUpRight } from 'lucide-react';
 import { useApp } from '@/lib/state/AppContext';
 import { COMPANY, NAV_LINKS } from '@/lib/constants';
+import logoImage from '../../image.png';
 
 export function Footer() {
   const pathname = usePathname();
   const { services } = useApp();
+  const [currentYear, setCurrentYear] = useState('');
+
+  useEffect(() => {
+    setCurrentYear(String(new Date().getFullYear()));
+  }, []);
 
   // Hide footer on dashboard pages
   if (pathname.startsWith('/dashboard')) return null;
@@ -25,17 +33,21 @@ export function Footer() {
           {/* Brand Info */}
           <div className="lg:col-span-5 space-y-6">
             <Link href="/" className="flex items-center gap-3 group w-fit">
-              <div className="w-10 h-10 bg-brand-gold text-white rounded-xl flex items-center justify-center shadow-lg shadow-brand-gold/10 group-hover:scale-105 transition-all">
-                <Building2 size={20} className="text-brand-blue" />
+              <div className="w-14 h-14 rounded-xl overflow-hidden bg-white shadow-lg shadow-brand-gold/10 ring-1 ring-slate-700/30 group-hover:scale-105 transition-all">
+                <Image
+                  src={logoImage}
+                  alt="Sador General Construction logo"
+                  className="h-full w-full object-contain p-0.5"
+                  priority
+                />
               </div>
               <div>
-                <span className="text-2xl font-extrabold text-white leading-none block">SADOR</span>
-                <span className="text-[10px] font-bold text-brand-gold uppercase tracking-widest mt-1 block">Construction</span>
+                <span className="text-xl font-extrabold text-white leading-none block">Sador General Construction</span>
               </div>
             </Link>
             
             <p className="text-slate-400 font-medium leading-relaxed max-w-sm">
-              Ethiopian Grade-1 general contracting and civil engineering firm. Executing buildings, road expansions, and monumental infrastructures since 2006.
+              General contractor focused on delivering reliable, high-quality construction services across Ethiopia.
             </p>
 
             {/* Newsletter Sign up */}
@@ -134,9 +146,10 @@ export function Footer() {
         {/* Copyright and Legals */}
         <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs font-semibold text-slate-500">
-            &copy; {new Date().getFullYear()} {COMPANY.name}. Licensed Grade-1 General Contractor. All rights reserved.
+            &copy; {currentYear} {COMPANY.name}. General Contractor. All rights reserved.
           </p>
           <div className="flex gap-6 text-xs font-semibold text-slate-500">
+            <Link href="/about" className="hover:text-white cursor-pointer transition-all">About Us</Link>
             <span className="hover:text-white cursor-pointer transition-all">Terms of Service</span>
             <span className="hover:text-white cursor-pointer transition-all">Privacy Policy</span>
           </div>
@@ -144,4 +157,4 @@ export function Footer() {
       </div>
     </footer>
   );
-}
+}

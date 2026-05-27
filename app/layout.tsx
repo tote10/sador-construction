@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { AppProvider } from '@/lib/state/AppContext';
+import { COMPANY } from '@/lib/constants';
 
 export const metadata: Metadata = {
-  title: 'Sador Construction - Building the Future',
-  description: 'Professional construction company in Ethiopia',
+  title: `${COMPANY.name} - General Contractor`,
+  description: 'Sador General Construction delivers buildings, roads, and civil infrastructure in Ethiopia with disciplined project control and reliable execution.',
 };
 
 export default function RootLayout({

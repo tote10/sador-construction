@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import Image from 'next/image';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { FloatingCallButton } from '@/components/layout/FloatingCallButton';
@@ -16,7 +18,7 @@ export default function ContactPage() {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      document.title = `Contact Us | ${seoSettings.title || 'Sador Construction'}`;
+      document.title = `Contact Us | ${seoSettings.title || 'Sador General Construction'}`;
     }
   }, [seoSettings.title]);
 
@@ -36,6 +38,15 @@ export default function ContactPage() {
     name: 'Addis Ababa (HQ)',
     project: 'Bole Highway Expansion & Civil Offices'
   });
+
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const role = searchParams?.get('role');
+    if (role) {
+      setFormData(prev => ({ ...prev, message: `Applying for: ${role}\n\n` }));
+    }
+  }, [searchParams]);
 
   const mapPins = [
     { id: 'addis', cx: 120, cy: 120, name: 'Addis Ababa (HQ)', project: 'Bole Highway Expansion & Civil Offices' },
@@ -83,17 +94,22 @@ export default function ContactPage() {
         {/* HERO HEADER */}
         <section className="bg-slate-900 text-white relative py-20 px-6 overflow-hidden">
           <div className="absolute inset-0 bg-brand-blue/90 mix-blend-multiply z-10" />
-          <img 
-            src="https://images.unsplash.com/photo-1581094288338-2314dddb7ece?q=80&w=1600" 
-            className="absolute inset-0 w-full h-full object-cover opacity-30" 
-            alt="Surveying Tool"
-          />
+          <div className="absolute inset-0 z-0">
+            <Image
+              src="https://images.unsplash.com/photo-1581094288338-2314dddb7ece?q=80&w=1600"
+              alt="Surveying Tool"
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover opacity-30"
+            />
+          </div>
           <div className="max-w-4xl mx-auto text-center relative z-20 space-y-6">
-            <span className="text-xs font-bold tracking-widest text-brand-gold uppercase block">Connect With Sador</span>
+            <span className="text-xs font-bold tracking-widest text-brand-gold uppercase block">Connect With Sador General Construction</span>
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight">Get in Touch</h1>
             <div className="w-16 h-1 bg-brand-gold mx-auto rounded-full" />
             <p className="text-slate-300 font-medium max-w-2xl mx-auto leading-relaxed text-base sm:text-lg">
-              Have an upcoming development project? Connect with Sador's civil engineering estimators. We review tender scopes nationwide.
+              Have an upcoming development project? Reach out for direct support on buildings, roads, and civil infrastructure planning.
             </p>
           </div>
         </section>
@@ -108,7 +124,7 @@ export default function ContactPage() {
                 <span className="text-xs font-bold tracking-widest text-brand-gold uppercase block">Headquarters</span>
                 <h2 className="text-3xl font-extrabold text-brand-blue tracking-tight leading-tight">Corporate Coordinates</h2>
                 <p className="text-sm text-slate-500 font-semibold leading-relaxed">
-                  Our central administration handles estimation parameters, bidding operations, and compliance scheduling.
+                  Our headquarters handles estimation, project coordination, and client communication.
                 </p>
               </div>
 
@@ -188,7 +204,7 @@ export default function ContactPage() {
                   </div>
                   <h3 className="text-2xl font-extrabold text-brand-blue mb-2">Request Filed Successfully</h3>
                   <p className="text-sm text-slate-500 font-medium max-w-sm">
-                    Your parameters have been logged. Sador's civil team will run estimations. Visit the Admin Panel to see the message listed.
+                    Your request has been logged. Our civil team will review it and reply as soon as possible.
                   </p>
                 </div>
               )}
@@ -345,7 +361,7 @@ export default function ContactPage() {
                 {/* Compass label overlay */}
                 <div className="absolute bottom-4 left-4 flex items-center gap-1.5 text-[10px] font-bold text-slate-400">
                   <Compass size={12} className="animate-spin-slow" />
-                  <span>SADOR LOCATION TRACKER v1.0</span>
+                  <span>SADOR GENERAL CONSTRUCTION LOCATION TRACKER v1.0</span>
                 </div>
               </div>
 
@@ -362,7 +378,7 @@ export default function ContactPage() {
                   <div className="space-y-4 animate-fade-in">
                     <div>
                       <h3 className="text-2xl font-extrabold text-brand-blue">{activePin.name}</h3>
-                      <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-0.5">Sador Active Zone</p>
+                      <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-0.5">Sador General Construction Active Zone</p>
                     </div>
 
                     <div className="bg-brand-light p-5 rounded-2xl border border-slate-100 space-y-2">
@@ -371,7 +387,7 @@ export default function ContactPage() {
                     </div>
 
                     <p className="text-xs text-slate-500 font-semibold leading-relaxed">
-                      Sador maintains field trailers and local logistics networks at this coordinates zone, allowing rapid mobilization of machinery and raw supplies.
+                      Sador General Construction maintains field trailers and local logistics networks at this coordinates zone, allowing rapid mobilization of machinery and raw supplies.
                     </p>
                   </div>
                 ) : (

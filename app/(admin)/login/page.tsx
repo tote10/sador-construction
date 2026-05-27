@@ -72,7 +72,7 @@ export default function LoginPage() {
             <Building2 size={24} />
           </div>
           <div>
-            <h2 className="text-2xl font-extrabold text-brand-blue">Sador CMS Console</h2>
+            <h2 className="text-2xl font-extrabold text-brand-blue">Sador General Construction CMS Console</h2>
             <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">Admin Authentication</p>
           </div>
         </div>

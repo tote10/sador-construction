@@ -32,6 +32,40 @@ export interface Testimonial {
   companyName: string;
   quote: string;
   rating: number;
+  image?: string;
+  note?: string;
+}
+
+export interface Award {
+  id: string;
+  title: string;
+  issuer?: string;
+  year?: string;
+  description?: string;
+  image?: string;
+  note?: string;
+}
+
+export interface BlogPost {
+  id: string;
+  title: string;
+  slug?: string;
+  excerpt?: string;
+  content: string;
+  author?: string;
+  publishedAt?: string;
+  published: boolean;
+}
+
+export interface Vacancy {
+  id: string;
+  title: string;
+  location?: string;
+  department?: string;
+  type?: string;
+  description: string;
+  postedAt?: string;
+  open: boolean;
 }
 
 export interface ContactSubmission {
@@ -64,6 +98,9 @@ interface AppContextType {
   projects: Project[];
   services: Service[];
   testimonials: Testimonial[];
+  awards: Award[];
+  blogPosts: BlogPost[];
+  vacancies: Vacancy[];
   submissions: ContactSubmission[];
   homepageContent: HomepageContent;
   seoSettings: SEOSettings;
@@ -84,6 +121,16 @@ interface AppContextType {
   addTestimonial: (testimonial: Omit<Testimonial, 'id'>) => void;
   updateTestimonial: (id: string, testimonial: Partial<Testimonial>) => void;
   deleteTestimonial: (id: string) => void;
+  addAward: (award: Omit<Award, 'id'>) => void;
+  updateAward: (id: string, award: Partial<Award>) => void;
+  deleteAward: (id: string) => void;
+
+  addBlogPost: (post: Omit<BlogPost, 'id' | 'publishedAt'>) => void;
+  updateBlogPost: (id: string, post: Partial<BlogPost>) => void;
+  deleteBlogPost: (id: string) => void;
+  addVacancy: (vacancy: Omit<Vacancy, 'id' | 'postedAt'>) => void;
+  updateVacancy: (id: string, vacancy: Partial<Vacancy>) => void;
+  deleteVacancy: (id: string) => void;
   
   submitContact: (submission: Omit<ContactSubmission, 'id' | 'submittedAt' | 'status'>) => void;
   deleteSubmission: (id: string) => void;
@@ -170,7 +217,7 @@ const defaultServices: Service[] = [
   {
     id: 'serv-1',
     title: 'Commercial Construction',
-    description: 'Grade-1 concrete works, steel erection, and fit-outs for multi-story headquarters, health complexes, and mixed-use real estates.',
+    description: 'Concrete works, steel erection, and fit-outs for multi-story headquarters, health complexes, and mixed-use real estates.',
     iconName: 'Building2',
     details: [
       'Reinforced concrete high-rise framing',
@@ -210,37 +257,69 @@ const defaultTestimonials: Testimonial[] = [
     id: 'test-1',
     clientName: 'Eng. Solomon Kassa',
     companyName: 'Ministry of Health Director',
-    quote: 'Sador Construction delivered the Hospital Wing on schedule and with absolute attention to detail. Their adherence to structural specs and premium finishes set a new local benchmark.',
-    rating: 5
+    quote: 'Sador General Construction delivered the Hospital Wing on schedule and with absolute attention to detail. Their adherence to structural specs and premium finishes set a new local benchmark.',
+    rating: 5,
+    image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=800',
+    note: 'Client testimonial after successful hospital wing handover.'
   },
   {
     id: 'test-2',
     clientName: 'Dr. Elizabeth Yohannes',
     companyName: 'IPDC Chief Infrastructure Officer',
     quote: 'For complex industrial utilities, Sador stands out. Their civil engineers are highly competent, and their reporting was fully transparent throughout the Hawassa project.',
-    rating: 5
+    rating: 5,
+    image: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=800',
+    note: 'Reference from industrial infrastructure delivery team.'
   }
 ];
 
+const defaultAwards: Award[] = [
+  {
+    id: 'award-1',
+    title: 'Best Civil Works 2023',
+    issuer: 'Ethiopian Construction Awards',
+    year: '2023',
+    description: 'Recognized for excellence in large-scale civil infrastructure delivery.',
+    image: 'https://images.unsplash.com/photo-1529070538774-1843cb3265df?q=80&w=800',
+    note: 'Awarded for consistent delivery quality and safety.'
+  },
+  {
+    id: 'award-2',
+    title: 'Safety Excellence',
+    issuer: 'National Safety Board',
+    year: '2022',
+    description: 'Outstanding commitment to site safety and zero-incident delivery.',
+    image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=800',
+    note: 'Safety recognition from the national board.'
+  }
+];
+
+const defaultBlogPosts: BlogPost[] = [];
+
+const defaultVacancies: Vacancy[] = [];
+
 const defaultHomepageContent: HomepageContent = {
-  heroTitle: 'Crafting Monumental Engineering Projects',
-  heroSubtitle: 'Ethiopia\'s premier Grade-1 General Contractor. We build durable roads, modern high-rises, and vital civic infrastructure with uncompromising precision and premium execution.',
-  yearsOfExperience: 18,
+  heroTitle: 'Reliable construction across Ethiopia',
+  heroSubtitle: 'Sador General Construction is a general contractor focused on delivering reliable, high-quality construction services across Ethiopia.',
+  yearsOfExperience: 7,
   projectsDone: 215,
   happyClients: 140,
   activeStaff: 85
 };
 
 const defaultSEOSettings: SEOSettings = {
-  title: 'Sador Construction - Premium Grade-1 General Contractor in Ethiopia',
-  description: 'Sador Construction builds commercial structures, arterial roads, and major infrastructure in Ethiopia. Leading Grade-1 contractor since 2006.',
-  keywords: 'Sador Construction, construction company Ethiopia, road contractor Addis Ababa, Grade 1 contractor, civil works Ethiopia, building projects'
+  title: 'Sador General Construction - General Contractor in Ethiopia',
+  description: 'Sador General Construction is a general contractor focused on delivering reliable, high-quality construction services across Ethiopia.',
+  keywords: 'Sador General Construction, company profile, construction company Ethiopia, road contractor Addis Ababa, contractor, civil works Ethiopia, building projects'
 };
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [awards, setAwards] = useState<Award[]>([]);
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const [vacancies, setVacancies] = useState<Vacancy[]>([]);
   const [submissions, setSubmissions] = useState<ContactSubmission[]>([]);
   const [homepageContent, setHomepageContent] = useState<HomepageContent>(defaultHomepageContent);
   const [seoSettings, setSEOSettings] = useState<SEOSettings>(defaultSEOSettings);
@@ -250,6 +329,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Initialize state from LocalStorage on mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      const stripGradeLabel = (text: string): string =>
+        text.replace(/grade\s*-?\s*1/gi, 'general').replace(/\s{2,}/g, ' ').trim();
+      const sanitizeText = (value: unknown): unknown => {
+        if (typeof value === 'string') return stripGradeLabel(value);
+        if (Array.isArray(value)) return value.map(sanitizeText);
+        if (value && typeof value === 'object') {
+          return Object.fromEntries(
+            Object.entries(value as Record<string, unknown>).map(([key, entry]) => [key, sanitizeText(entry)])
+          );
+        }
+        return value;
+      };
+
       const getStored = <T,>(key: string, fallback: T): T => {
         try {
           const item = localStorage.getItem(key);
@@ -262,6 +354,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setProjects(getStored('sador_projects', defaultProjects));
       setServices(getStored('sador_services', defaultServices));
       setTestimonials(getStored('sador_testimonials', defaultTestimonials));
+      setAwards(getStored('sador_awards', defaultAwards));
+      setBlogPosts(getStored('sador_blog_posts', defaultBlogPosts));
+      setVacancies(getStored('sador_vacancies', defaultVacancies));
       setSubmissions(getStored('sador_submissions', [
         {
           id: 'sub-1',
@@ -270,12 +365,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           phone: '+251911223344',
           projectType: 'Commercial Building',
           message: 'We are seeking bids for an upcoming 12-story residential apartments complex in Bole. Please provide your capabilities and schedule a meeting.',
-          submittedAt: new Date(Date.now() - 86400000).toLocaleString(), // 1 day ago
+          submittedAt: '1 day ago',
           status: 'unread'
         }
       ]));
-      setHomepageContent(getStored('sador_homepage', defaultHomepageContent));
-      setSEOSettings(getStored('sador_seo', defaultSEOSettings));
+      const storedHomepage = getStored('sador_homepage', defaultHomepageContent);
+      setHomepageContent(sanitizeText(storedHomepage) as HomepageContent);
+      setSEOSettings(sanitizeText(getStored('sador_seo', defaultSEOSettings)) as SEOSettings);
       setIsLoggedIn(getStored('sador_isLoggedIn', false));
       setLoaded(true);
     }
@@ -299,6 +395,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       localStorage.setItem('sador_testimonials', JSON.stringify(testimonials));
     }
   }, [testimonials, loaded]);
+
+  useEffect(() => {
+    if (loaded) {
+      localStorage.setItem('sador_awards', JSON.stringify(awards));
+    }
+  }, [awards, loaded]);
+
+  useEffect(() => {
+    if (loaded) {
+      localStorage.setItem('sador_blog_posts', JSON.stringify(blogPosts));
+    }
+  }, [blogPosts, loaded]);
+
+  useEffect(() => {
+    if (loaded) {
+      localStorage.setItem('sador_vacancies', JSON.stringify(vacancies));
+    }
+  }, [vacancies, loaded]);
 
   useEffect(() => {
     if (loaded) {
@@ -389,6 +503,59 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setTestimonials(prev => prev.filter(t => t.id !== id));
   };
 
+  // Awards CRUD
+  const addAward = (awardData: Omit<Award, 'id'>) => {
+    const newAward: Award = {
+      ...awardData,
+      id: `award-${Date.now()}`
+    };
+    setAwards(prev => [...prev, newAward]);
+  };
+
+  const updateAward = (id: string, updatedData: Partial<Award>) => {
+    setAwards(prev => prev.map(a => a.id === id ? { ...a, ...updatedData } : a));
+  };
+
+  const deleteAward = (id: string) => {
+    setAwards(prev => prev.filter(a => a.id !== id));
+  };
+
+  // BlogPosts CRUD
+  const addBlogPost = (postData: Omit<BlogPost, 'id' | 'publishedAt'>) => {
+    const newPost: BlogPost = {
+      ...postData,
+      id: `post-${Date.now()}`,
+      publishedAt: postData.published ? new Date().toISOString() : undefined
+    } as BlogPost;
+    setBlogPosts(prev => [newPost, ...prev]);
+  };
+
+  const updateBlogPost = (id: string, updatedData: Partial<BlogPost>) => {
+    setBlogPosts(prev => prev.map(p => p.id === id ? { ...p, ...updatedData } : p));
+  };
+
+  const deleteBlogPost = (id: string) => {
+    setBlogPosts(prev => prev.filter(p => p.id !== id));
+  };
+
+  // Vacancies CRUD
+  const addVacancy = (vacancyData: Omit<Vacancy, 'id' | 'postedAt'>) => {
+    const newVacancy: Vacancy = {
+      ...vacancyData,
+      id: `vac-${Date.now()}`,
+      postedAt: vacancyData.open ? new Date().toISOString() : undefined
+    } as Vacancy;
+    setVacancies(prev => [newVacancy, ...prev]);
+  };
+
+  const updateVacancy = (id: string, updatedData: Partial<Vacancy>) => {
+    setVacancies(prev => prev.map(v => v.id === id ? { ...v, ...updatedData } : v));
+  };
+
+  const deleteVacancy = (id: string) => {
+    setVacancies(prev => prev.filter(v => v.id !== id));
+  };
+
   // Submissions operations
   const submitContact = (contactData: Omit<ContactSubmission, 'id' | 'submittedAt' | 'status'>) => {
     const newSubmission: ContactSubmission = {
@@ -423,6 +590,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         projects,
         services,
         testimonials,
+        awards,
+        blogPosts,
+        vacancies,
         submissions,
         homepageContent,
         seoSettings,
@@ -438,6 +608,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         addTestimonial,
         updateTestimonial,
         deleteTestimonial,
+        addAward,
+        updateAward,
+        deleteAward,
+        addBlogPost,
+        updateBlogPost,
+        deleteBlogPost,
+        addVacancy,
+        updateVacancy,
+        deleteVacancy,
         submitContact,
         deleteSubmission,
         markSubmissionRead,

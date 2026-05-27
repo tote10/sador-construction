@@ -1,12 +1,14 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { 
   ArrowRight, Phone, Mail, MapPin, Building2, HardHat, Shield, 
   Target, Award, CheckCircle, ChevronLeft, ChevronRight, MessageSquare, Star 
 } from 'lucide-react';
 import { useApp } from '@/lib/state/AppContext';
+import AwardsSlider from '@/components/ui/AwardsSlider';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { FloatingCallButton } from '@/components/layout/FloatingCallButton';
@@ -80,6 +82,15 @@ export default function LandingPage() {
     setActiveTestimonial(prev => (prev - 1 + (testimonials.length || 1)) % (testimonials.length || 1));
   };
 
+  // Auto advance testimonials every 6s
+  useEffect(() => {
+    if (!testimonials || testimonials.length <= 1) return;
+    const id = setInterval(() => setActiveTestimonial(prev => (prev + 1) % testimonials.length), 6000);
+    return () => clearInterval(id);
+  }, [testimonials]);
+
+  const sanitizedHeroSubtitle = homepageContent.heroSubtitle.replace(/grade\s*-?\s*1/gi, 'general');
+
   const featuredProjects = projects.filter(p => p.featured);
   const topServices = services.slice(0, 3);
   const heroWords = homepageContent.heroTitle.split(' ');
@@ -105,10 +116,13 @@ export default function LandingPage() {
           {/* Background Images with Zoom (Ken Burns Effect) */}
           <div className="absolute inset-0 z-0">
             <div className="absolute inset-0 bg-brand-blue/85 mix-blend-multiply z-10" />
-            <img 
-              src="https://images.unsplash.com/photo-1541888086425-d81bb19240f5?q=80&w=2000" 
-              alt="Heavy Civil Engineering" 
-              className="w-full h-full object-cover animate-[pulse_10s_infinite] opacity-60 scale-105"
+            <Image
+              src="https://images.unsplash.com/photo-1541888086425-d81bb19240f5?q=80&w=2000"
+              alt="Heavy Civil Engineering"
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover animate-[pulse_10s_infinite] opacity-60 scale-105"
             />
           </div>
 
@@ -117,7 +131,7 @@ export default function LandingPage() {
             <div className="lg:col-span-7 space-y-8">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-white font-bold text-xs uppercase tracking-widest">
                 <span className="w-2.5 h-2.5 rounded-full bg-brand-gold animate-ping" />
-                Licensed Grade-1 Contractor
+                General Contractor
               </div>
 
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-[1.08] tracking-tight">
@@ -130,7 +144,7 @@ export default function LandingPage() {
               </h1>
 
               <p className="text-lg text-slate-300 font-medium leading-relaxed max-w-xl">
-                {homepageContent.heroSubtitle}
+                {sanitizedHeroSubtitle}
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 pt-2">
@@ -145,7 +159,7 @@ export default function LandingPage() {
                   href="/contact" 
                   className="inline-flex justify-center items-center gap-2 px-8 py-4 bg-white/10 hover:bg-white/20 text-white border border-white/20 font-bold rounded-xl transition-all duration-300 backdrop-blur-sm hover:-translate-y-0.5"
                 >
-                  Request a Quote
+                  Contact Us
                 </Link>
               </div>
             </div>
@@ -229,31 +243,37 @@ export default function LandingPage() {
             {/* About Left Image Grid */}
             <div className="lg:col-span-6 relative">
               <div className="grid grid-cols-12 gap-4">
-                <div className="col-span-8 rounded-3xl overflow-hidden shadow-xl border-4 border-white aspect-[4/3] bg-slate-200">
-                  <img 
-                    src="https://images.unsplash.com/photo-1504307651254-35680f356f58?q=80&w=1000" 
-                    alt="On Site Excavation" 
-                    className="w-full h-full object-cover hover:scale-105 transition duration-500" 
+                <div className="col-span-8 relative rounded-3xl overflow-hidden shadow-xl border-4 border-white aspect-[4/3] bg-slate-200">
+                  <Image
+                    src="https://images.unsplash.com/photo-1504307651254-35680f356f58?q=80&w=1000"
+                    alt="On Site Excavation"
+                    fill
+                    sizes="(min-width: 1024px) 40vw, 100vw"
+                    className="object-cover hover:scale-105 transition duration-500"
                   />
                 </div>
-                <div className="col-span-4 rounded-3xl overflow-hidden shadow-lg border-4 border-white aspect-square bg-slate-200 mt-8">
-                  <img 
-                    src="https://images.unsplash.com/photo-1581094288338-2314dddb7ece?q=80&w=600" 
-                    alt="Heavy Machinery Works" 
-                    className="w-full h-full object-cover" 
+                <div className="col-span-4 relative rounded-3xl overflow-hidden shadow-lg border-4 border-white aspect-square bg-slate-200 mt-8">
+                  <Image
+                    src="https://images.unsplash.com/photo-1581094288338-2314dddb7ece?q=80&w=600"
+                    alt="Heavy Machinery Works"
+                    fill
+                    sizes="(min-width: 1024px) 20vw, 100vw"
+                    className="object-cover"
                   />
                 </div>
-                <div className="col-span-5 rounded-3xl overflow-hidden shadow-lg border-4 border-white aspect-square bg-slate-200 -mt-12 ml-6 z-10">
-                  <img 
-                    src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=600" 
-                    alt="Hospital Foundation" 
-                    className="w-full h-full object-cover" 
+                <div className="col-span-5 relative rounded-3xl overflow-hidden shadow-lg border-4 border-white aspect-square bg-slate-200 -mt-12 ml-6 z-10">
+                  <Image
+                    src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=600"
+                    alt="Hospital Foundation"
+                    fill
+                    sizes="(min-width: 1024px) 25vw, 100vw"
+                    className="object-cover"
                   />
                 </div>
                 <div className="col-span-7 bg-brand-blue text-white rounded-3xl p-6 sm:p-8 shadow-xl -mt-6 border-4 border-white z-10 flex flex-col justify-center">
                   <Award size={36} className="text-brand-gold mb-3" />
-                  <h4 className="text-lg font-bold mb-1">Grade-1 Status</h4>
-                  <p className="text-xs text-slate-300 font-semibold leading-relaxed">Officially accredited for structural and road construction projects of unlimited contract value.</p>
+                  <h4 className="text-lg font-bold mb-1">General Contractor</h4>
+                  <p className="text-xs text-slate-300 font-semibold leading-relaxed">Focused on delivering reliable, high-quality construction services across Ethiopia.</p>
                 </div>
               </div>
             </div>
@@ -261,18 +281,18 @@ export default function LandingPage() {
             {/* About Right Content */}
             <div className="lg:col-span-6 space-y-8 lg:pl-4">
               <div className="space-y-4">
-                <span className="text-xs font-bold tracking-widest text-brand-gold uppercase block">Sador Profile</span>
+                <span className="text-xs font-bold tracking-widest text-brand-gold uppercase block">Sador General Construction Profile</span>
                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-brand-blue tracking-tight leading-tight">
-                  Transforming Visions into Enduring Concrete Solutions
+                  Building durable infrastructure with discipline, safety, and precision.
                 </h2>
               </div>
 
               <div className="space-y-6 text-slate-600 font-medium leading-relaxed">
                 <p>
-                  Sador Construction was established with a clear mandate: to provide high-grade general contracting capabilities that merge global engineering metrics with deep regional insight. Over nearly two decades, we have deliberately engineered robust roads, heavy structural foundations, and commercial complexes that define the cityscape.
+                  Sador General Construction is a general contractor focused on delivering reliable, high-quality construction services across Ethiopia.
                 </p>
                 <p>
-                  Our Grade-1 registration is backed by high-capacity heavy machinery, specialized concrete processing networks, and a dedicated team of master project managers, surveyors, and environmental design engineers.
+                  Our team combines practical field experience, structured project control, and quality-driven execution to turn plans into durable, functional assets for clients and communities.
                 </p>
               </div>
 
@@ -280,16 +300,16 @@ export default function LandingPage() {
                 <div className="space-y-2">
                   <h4 className="text-brand-blue font-bold flex items-center gap-2">
                     <CheckCircle size={16} className="text-brand-gold" />
-                    Civic Works
+                      Civil Infrastructure
                   </h4>
-                  <p className="text-xs text-slate-500 font-medium">Asphalt networks and underpasses.</p>
+                  <p className="text-xs text-slate-500 font-medium">Roads, drainage, and utility works.</p>
                 </div>
                 <div className="space-y-2">
                   <h4 className="text-brand-blue font-bold flex items-center gap-2">
                     <CheckCircle size={16} className="text-brand-gold" />
-                    Commercial Structures
+                      Building Construction
                   </h4>
-                  <p className="text-xs text-slate-500 font-medium">High-rise framing and finishes.</p>
+                  <p className="text-xs text-slate-500 font-medium">Commercial and residential structures.</p>
                 </div>
               </div>
 
@@ -318,7 +338,7 @@ export default function LandingPage() {
                 Our Areas of Execution
               </h2>
               <p className="text-base sm:text-lg text-slate-500 font-medium">
-                From initial ground engineering to complex structural commissionings, Sador has the machinery and engineers to execute at scale.
+                From estimation to handover, our service structure supports durable construction outcomes.
               </p>
             </div>
 
@@ -401,10 +421,12 @@ export default function LandingPage() {
                     }`}
                   >
                     {/* Background Image */}
-                    <img 
-                      src={project.images[0] || 'https://images.unsplash.com/photo-1541888086425-d81bb19240f5?q=80&w=1200'} 
+                    <Image
+                      src={project.images[0] || 'https://images.unsplash.com/photo-1541888086425-d81bb19240f5?q=80&w=1200'}
                       alt={project.title}
-                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-[1200ms] opacity-70"
+                      fill
+                      sizes="(min-width: 1024px) 58vw, 100vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-[1200ms] opacity-70"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent opacity-95" />
                     
@@ -449,13 +471,16 @@ export default function LandingPage() {
 
               {featuredProjects.length === 0 && (
                 <div className="col-span-12 text-center py-12 text-slate-500">
-                  No featured projects marked. Edit projects in the admin panel to show them here.
+                  No featured projects are marked yet. Highlight portfolio items to show them here.
                 </div>
               )}
             </div>
 
           </div>
         </section>
+
+        {/* AWARDS */}
+        <AwardsSlider />
 
         {/* TESTIMONIALS */}
         {testimonials.length > 0 && (
@@ -491,6 +516,16 @@ export default function LandingPage() {
                     <blockquote className="text-xl sm:text-2xl font-medium text-slate-700 leading-relaxed max-w-2xl mx-auto italic">
                       "{test.quote}"
                     </blockquote>
+
+                    {test.image && (
+                      <div className="relative mx-auto w-20 h-20 rounded-full overflow-hidden border-2 border-brand-gold/40 shadow-sm">
+                        <Image src={test.image} alt={test.clientName} fill sizes="80px" className="object-cover" />
+                      </div>
+                    )}
+
+                    {test.note && (
+                      <p className="text-sm text-slate-500 max-w-xl mx-auto">{test.note}</p>
+                    )}
                     
                     <div className="flex flex-col items-center">
                       <cite className="font-extrabold text-brand-blue not-italic text-base sm:text-lg">
@@ -544,7 +579,7 @@ export default function LandingPage() {
               </div>
               
               <p className="text-slate-600 font-medium leading-relaxed">
-                Consult with Sador's general contracting project estimation unit. Supply your parameters and scope details, and our civil estimation engineers will structure a comprehensive outline.
+                Consult with Sador General Construction's project estimation unit. Supply your parameters and scope details, and our civil estimation engineers will structure a comprehensive outline.
               </p>
 
               <div className="space-y-6 pt-4 border-t border-slate-200/50">
@@ -579,7 +614,7 @@ export default function LandingPage() {
                   </div>
                   <h3 className="text-2xl font-extrabold text-brand-blue mb-2">Submission Received</h3>
                   <p className="text-sm text-slate-500 font-medium max-w-sm">
-                    Thank you. Your parameters have been queued for processing. You can check this submission in the Admin Panel submissions manager!
+                    Thank you. Your request has been queued for review and our team will respond shortly.
                   </p>
                 </div>
               )}

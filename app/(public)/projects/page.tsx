@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
+import Image from 'next/image';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { FloatingCallButton } from '@/components/layout/FloatingCallButton';
@@ -29,7 +30,7 @@ export default function ProjectsPage() {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      document.title = `Projects Portfolio | ${seoSettings.title || 'Sador Construction'}`;
+      document.title = `Projects Portfolio | ${seoSettings.title || 'Sador General Construction'}`;
     }
   }, [seoSettings.title]);
 
@@ -98,17 +99,22 @@ export default function ProjectsPage() {
         {/* HERO HEADER */}
         <section className="bg-slate-900 text-white relative py-20 px-6 overflow-hidden">
           <div className="absolute inset-0 bg-brand-blue/90 mix-blend-multiply z-10" />
-          <img 
-            src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1600" 
-            className="absolute inset-0 w-full h-full object-cover opacity-30" 
-            alt="Commercial Complex"
-          />
+          <div className="absolute inset-0 z-0">
+            <Image
+              src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1600"
+              alt="Commercial Complex"
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover opacity-30"
+            />
+          </div>
           <div className="max-w-4xl mx-auto text-center relative z-20 space-y-6">
             <span className="text-xs font-bold tracking-widest text-brand-gold uppercase block">Portfolio Catalog</span>
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight">Our Signature Projects</h1>
             <div className="w-16 h-1 bg-brand-gold mx-auto rounded-full" />
             <p className="text-slate-300 font-medium max-w-2xl mx-auto leading-relaxed text-base sm:text-lg">
-              Explore our record of structural execution across buildings, roads, and civil utilities in Ethiopia.
+              Explore the project record covering buildings, roads, and civil infrastructure across Ethiopia.
             </p>
           </div>
         </section>
@@ -212,10 +218,12 @@ export default function ProjectsPage() {
                   >
                     {/* Project Image Box */}
                     <div className="h-64 sm:h-72 bg-slate-100 relative overflow-hidden shrink-0">
-                      <img 
-                        src={project.images[0] || 'https://images.unsplash.com/photo-1541888086425-d81bb19240f5?q=80&w=1200'} 
-                        alt={project.title} 
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      <Image
+                        src={project.images[0] || 'https://images.unsplash.com/photo-1541888086425-d81bb19240f5?q=80&w=1200'}
+                        alt={project.title}
+                        fill
+                        sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-700"
                       />
                       
                       {/* Floating tags */}
@@ -304,10 +312,12 @@ export default function ProjectsPage() {
                     onMouseLeave={() => { isDragging.current = false; }}
                   >
                     {/* After Image (Full width background) */}
-                    <img 
-                      src={selectedProject.afterImage} 
-                      alt="Completed project" 
-                      className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+                    <Image
+                      src={selectedProject.afterImage}
+                      alt="Completed project"
+                      fill
+                      sizes="(min-width: 1024px) 58vw, 100vw"
+                      className="object-cover pointer-events-none"
                     />
                     <div className="absolute bottom-4 right-4 z-20 px-3 py-1 bg-brand-blue/80 text-white text-[10px] font-bold uppercase tracking-wider rounded">AFTER</div>
 
@@ -316,12 +326,16 @@ export default function ProjectsPage() {
                       className="absolute inset-y-0 left-0 right-0 overflow-hidden pointer-events-none"
                       style={{ width: `${sliderPosition}%` }}
                     >
-                      <img 
-                        src={selectedProject.beforeImage} 
-                        alt="Project before start" 
-                        className="absolute inset-y-0 left-0 w-full h-full object-cover max-w-none"
-                        style={{ width: sliderContainerRef.current?.getBoundingClientRect().width }}
-                      />
+                      <div className="relative h-full w-full">
+                        <Image
+                          src={selectedProject.beforeImage}
+                          alt="Project before start"
+                          fill
+                          sizes="(min-width: 1024px) 58vw, 100vw"
+                          className="object-cover"
+                          style={{ width: sliderContainerRef.current?.getBoundingClientRect().width }}
+                        />
+                      </div>
                     </div>
                     <div className="absolute bottom-4 left-4 z-20 px-3 py-1 bg-brand-gold/80 text-brand-blue text-[10px] font-bold uppercase tracking-wider rounded">BEFORE</div>
 
@@ -338,10 +352,12 @@ export default function ProjectsPage() {
                 ) : (
                   /* REGULAR IMAGE SLIDESHOW */
                   <div className="relative w-full h-full min-h-[350px] lg:min-h-[500px]">
-                    <img 
-                      src={selectedProject.images[activeImageIndex] || 'https://images.unsplash.com/photo-1541888086425-d81bb19240f5?q=80&w=1200'} 
-                      alt={selectedProject.title} 
-                      className="w-full h-full object-cover opacity-90"
+                    <Image
+                      src={selectedProject.images[activeImageIndex] || 'https://images.unsplash.com/photo-1541888086425-d81bb19240f5?q=80&w=1200'}
+                      alt={selectedProject.title}
+                      fill
+                      sizes="(min-width: 1024px) 58vw, 100vw"
+                      className="object-cover opacity-90"
                     />
 
                     {/* Navigation buttons */}

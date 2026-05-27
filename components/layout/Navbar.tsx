@@ -1,17 +1,17 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Phone, LayoutDashboard, ShieldCheck, Lock } from 'lucide-react';
-import { useApp } from '@/lib/state/AppContext';
-import { NAV_LINKS, COMPANY } from '@/lib/constants';
+import { Menu, X } from 'lucide-react';
+import { NAV_LINKS } from '@/lib/constants';
+import logoImage from '../../image.png';
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-  const { isLoggedIn } = useApp();
 
   // Scroll shadow effect
   useEffect(() => {
@@ -44,19 +44,23 @@ export function Navbar() {
     <nav 
       className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
         scrolled 
-          ? 'bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-[0_4px_30px_rgba(0,0,0,0.03)] py-4' 
-          : 'bg-transparent py-6'
+          ? 'bg-white/82 backdrop-blur-xl border-b border-slate-100/80 shadow-[0_10px_40px_rgba(15,41,66,0.06)] py-4 sm:py-5' 
+          : 'bg-transparent py-4 sm:py-6'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-6 min-h-[72px] sm:min-h-[88px] flex items-center justify-between gap-4">
         {/* Brand Logo */}
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 bg-brand-blue rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-brand-blue/10 group-hover:scale-105 transition-all">
-            <span className="text-xl font-bold tracking-tight text-brand-gold">S</span>
+        <Link href="/" className="flex items-center gap-3 sm:gap-4 group min-w-0">
+          <div className="shrink-0 w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl overflow-hidden bg-white shadow-md shadow-brand-blue/10 ring-1 ring-slate-100 group-hover:scale-105 transition-all">
+            <Image
+              src={logoImage}
+              alt="Sador General Construction logo"
+              className="h-full w-full object-contain p-1"
+              priority
+            />
           </div>
-          <div className="flex flex-col">
-            <span className="text-xl font-extrabold tracking-tight text-brand-blue leading-none">SADOR</span>
-            <span className="text-[10px] font-bold text-brand-gold uppercase tracking-widest mt-0.5">Construction</span>
+          <div className="hidden sm:flex flex-col min-w-0">
+            <span className="truncate text-base sm:text-lg lg:text-xl font-extrabold tracking-tight text-brand-blue leading-none">Sador General Construction</span>
           </div>
         </Link>
 
@@ -80,46 +84,11 @@ export function Navbar() {
           ))}
         </div>
 
-        {/* Action Buttons */}
-        <div className="hidden md:flex items-center gap-4">
-          {isLoggedIn ? (
-            <Link
-              href="/dashboard"
-              className="flex items-center gap-2 border border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 shadow-sm"
-            >
-              <LayoutDashboard size={16} />
-              CMS Admin
-            </Link>
-          ) : (
-            <Link
-              href="/login"
-              className="text-slate-400 hover:text-brand-gold p-2.5 transition-colors"
-              title="Admin Portal"
-            >
-              <Lock size={16} />
-            </Link>
-          )}
-
-          <a
-            href={`tel:${COMPANY.phone}`}
-            className="flex items-center gap-2 bg-brand-blue hover:bg-brand-blue/90 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 shadow-md shadow-brand-blue/10 hover:shadow-brand-blue/20 hover:-translate-y-0.5"
-          >
-            <Phone size={16} />
-            Call: {COMPANY.phone}
-          </a>
-        </div>
-
         {/* Mobile Menu Button */}
         <div className="flex items-center gap-2 md:hidden">
-          <Link
-            href={isLoggedIn ? "/dashboard" : "/login"}
-            className="text-brand-blue/80 hover:text-brand-gold p-2 transition-colors"
-          >
-            {isLoggedIn ? <ShieldCheck size={20} /> : <Lock size={18} />}
-          </Link>
           <button 
             onClick={() => setIsOpen(!isOpen)} 
-            className="text-brand-blue p-2 hover:bg-slate-100 rounded-lg transition"
+            className="text-brand-blue p-2 hover:bg-slate-100 rounded-xl transition"
             aria-label="Toggle menu"
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -155,26 +124,7 @@ export function Navbar() {
             </Link>
           ))}
         </div>
-        <div className="flex flex-col gap-3 pt-2">
-          <a
-            href={`tel:${COMPANY.phone}`}
-            className="flex items-center justify-center gap-2 bg-brand-blue text-white py-3.5 rounded-xl font-bold text-sm transition"
-          >
-            <Phone size={18} />
-            Call Now: {COMPANY.phone}
-          </a>
-          {isLoggedIn && (
-            <Link
-              href="/dashboard"
-              onClick={() => setIsOpen(false)}
-              className="flex items-center justify-center gap-2 border border-brand-gold text-brand-gold py-3.5 rounded-xl font-bold text-sm transition"
-            >
-              <LayoutDashboard size={18} />
-              Go to CMS Dashboard
-            </Link>
-          )}
-        </div>
       </div>
     </nav>
   );
-}
+}

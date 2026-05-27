@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useApp } from '@/lib/state/AppContext';
 import { 
   HardHat, Building2, MessageSquare, Inbox, ArrowRight, PlusCircle, 
-  Settings, Clock, CheckCircle2, AlertCircle 
+  Settings, Clock, CheckCircle2, AlertCircle, Award
 } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -23,9 +23,12 @@ export default function DashboardPage() {
 
   // Quick Action cards
   const quickActions = [
-    { label: 'Add Project', desc: 'Publish a new construction work', href: '/dashboard/projects?action=new', icon: <PlusCircle className="text-brand-gold" /> },
-    { label: 'Edit Homepage Copy', desc: 'Revise hero header & stats', href: '/dashboard/homepage', icon: <Settings className="text-brand-gold" /> },
-    { label: 'Write Testimonial', desc: 'Add developer partner references', href: '/dashboard/testimonials?action=new', icon: <MessageSquare className="text-brand-gold" /> },
+    { label: 'Projects', desc: 'Add, feature, or remove portfolio items', href: '/dashboard/projects', icon: <PlusCircle className="text-brand-gold" /> },
+    { label: 'Homepage', desc: 'Edit hero text and stats', href: '/dashboard/homepage', icon: <Settings className="text-brand-gold" /> },
+    { label: 'Testimonials', desc: 'Manage client quotes', href: '/dashboard/testimonials', icon: <MessageSquare className="text-brand-gold" /> },
+    { label: 'Awards', desc: 'Add certificates and honors', href: '/dashboard/awards', icon: <Award className="text-brand-gold" /> },
+    { label: 'Posts', desc: 'Create and publish updates', href: '/dashboard/blog', icon: <ArrowRight className="text-brand-gold" /> },
+    { label: 'Vacancies', desc: 'Manage open roles', href: '/dashboard/vacancies', icon: <PlusCircle className="text-brand-gold" /> },
   ];
 
   return (
@@ -36,9 +39,9 @@ export default function DashboardPage() {
         <div className="absolute top-0 right-0 w-36 h-36 bg-brand-gold/5 rounded-full blur-3xl pointer-events-none" />
         
         <div className="space-y-2">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white">Sador Construction CMS</h2>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-white">Admin Control Center</h2>
           <p className="text-sm text-slate-400 font-semibold max-w-lg">
-            Welcome to your administrative control node. Update services, projects, and SEO fields. All edits propagate to the public site instantly.
+            Manage the live site from one place. Each card below opens a working screen for the content you can actually change.
           </p>
         </div>
 
@@ -114,7 +117,7 @@ export default function DashboardPage() {
             <div className="flex justify-between items-center border-b border-slate-100 pb-4">
               <h3 className="text-lg font-bold text-brand-blue flex items-center gap-2">
                 <Inbox size={18} className="text-brand-gold" />
-                Recent Inquiries Inbox
+                Recent Inquiries
               </h3>
               <Link 
                 href="/dashboard/contacts" 
@@ -159,7 +162,7 @@ export default function DashboardPage() {
           </div>
           
           <div className="text-[11px] font-semibold text-slate-400 border-t border-slate-100 pt-4 mt-4">
-            * Submissions correspond to real-time client postings from the public forms.
+            * This inbox shows the latest client messages from the public contact form.
           </div>
         </div>
 
@@ -191,9 +194,9 @@ export default function DashboardPage() {
           <div className="p-4 bg-slate-900 text-slate-400 rounded-2xl text-[11px] font-semibold leading-relaxed border border-brand-gold/15">
             <div className="text-white font-bold mb-1 flex items-center gap-1.5">
               <AlertCircle size={12} className="text-brand-gold" />
-              Real-time Persistence
+              Local CMS Mode
             </div>
-            Editing content updates the data array locally. When you are ready to implement the database, swap out the functions inside <code className="text-brand-gold">AppContext.tsx</code> with your Supabase calls.
+            Changes save in browser storage for now. Once the backend is ready, replace the functions inside <code className="text-brand-gold">AppContext.tsx</code> with API calls.
           </div>
         </div>
 
