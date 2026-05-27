@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+// useSearchParams imported once below
 import Image from 'next/image';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
@@ -12,6 +12,7 @@ import {
   Phone, Mail, MapPin, CheckCircle, Clock, ShieldCheck, 
   Send, Compass, Info, HeartHandshake, HelpCircle 
 } from 'lucide-react';
+// contact is a normal contact page; vacancy applications handled on the Vacancies page
 
 export default function ContactPage() {
   const { seoSettings, submitContact } = useApp();
@@ -22,12 +23,10 @@ export default function ContactPage() {
     }
   }, [seoSettings.title]);
 
-  // Form State
+  // Form State (simplified: only name, email, message)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    phone: '',
-    projectType: 'Building',
     message: ''
   });
   const [submitted, setSubmitted] = useState(false);
@@ -38,15 +37,7 @@ export default function ContactPage() {
     name: 'Addis Ababa (HQ)',
     project: 'Bole Highway Expansion & Civil Offices'
   });
-
-  const searchParams = useSearchParams();
-
-  useEffect(() => {
-    const role = searchParams?.get('role');
-    if (role) {
-      setFormData(prev => ({ ...prev, message: `Applying for: ${role}\n\n` }));
-    }
-  }, [searchParams]);
+  // contact page is general contact form; does not handle vacancy applications
 
   const mapPins = [
     { id: 'addis', cx: 120, cy: 120, name: 'Addis Ababa (HQ)', project: 'Bole Highway Expansion & Civil Offices' },
@@ -60,30 +51,26 @@ export default function ContactPage() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  
+
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.message) return;
+    if (!formData.message) return;
 
+
+
+
+    // General contact submission
     submitContact({
       name: formData.name,
       email: formData.email,
-      phone: formData.phone,
-      projectType: formData.projectType,
       message: formData.message
     });
 
     setSubmitted(true);
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      projectType: 'Building',
-      message: ''
-    });
-
+    setFormData({ name: '', email: '', message: '' });
     setTimeout(() => setSubmitted(false), 6000);
   };
-
   return (
     <>
       <Navbar />
@@ -99,7 +86,6 @@ export default function ContactPage() {
               src="https://images.unsplash.com/photo-1581094288338-2314dddb7ece?q=80&w=1600"
               alt="Surveying Tool"
               fill
-              priority
               sizes="100vw"
               className="object-cover opacity-30"
             />
@@ -210,7 +196,7 @@ export default function ContactPage() {
               )}
 
               <div className="bg-brand-light p-8 sm:p-12 rounded-3xl border border-slate-100 shadow-inner">
-                <h3 className="text-xl font-bold text-brand-blue mb-6">Request Project Estimation</h3>
+                <h3 className="text-xl font-bold text-brand-blue mb-6">Contact Us</h3>
                 
                 <form onSubmit={handleFormSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -220,9 +206,8 @@ export default function ContactPage() {
                         type="text" 
                         name="name"
                         value={formData.name}
-                        onChange={handleInputChange}
-                        required
-                        placeholder="John Doe" 
+                          onChange={handleInputChange}
+                          placeholder="John Doe" 
                         className="w-full bg-white border border-slate-200 focus:border-brand-gold focus:ring-4 focus:ring-brand-gold/5 rounded-xl py-3.5 px-4 text-sm font-semibold text-slate-900 outline-none transition"
                       />
                     </div>
@@ -233,53 +218,26 @@ export default function ContactPage() {
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
-                        required
                         placeholder="email@company.com" 
                         className="w-full bg-white border border-slate-200 focus:border-brand-gold focus:ring-4 focus:ring-brand-gold/5 rounded-xl py-3.5 px-4 text-sm font-semibold text-slate-900 outline-none transition"
                       />
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Phone Number</label>
-                      <input 
-                        type="text" 
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        placeholder="+251 900 000 000" 
-                        className="w-full bg-white border border-slate-200 focus:border-brand-gold focus:ring-4 focus:ring-brand-gold/5 rounded-xl py-3.5 px-4 text-sm font-semibold text-slate-900 outline-none transition"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Project Category</label>
-                      <select 
-                        name="projectType"
-                        value={formData.projectType}
-                        onChange={handleInputChange}
-                        className="w-full bg-white border border-slate-200 focus:border-brand-gold focus:ring-4 focus:ring-brand-gold/5 rounded-xl py-3.5 px-4 text-sm font-semibold text-slate-900 outline-none transition cursor-pointer"
-                      >
-                        <option value="Building">Building Structure</option>
-                        <option value="Road">Road & Civil Works</option>
-                        <option value="Infrastructure">Civil Infrastructure</option>
-                        <option value="Other">Other Works</option>
-                      </select>
-                    </div>
-                  </div>
-
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Project Specification / message</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Message</label>
                     <textarea 
                       name="message"
                       value={formData.message}
                       onChange={handleInputChange}
                       required
-                      rows={5}
-                      placeholder="Specify project parameters, site location description, and design boundaries..." 
+                      rows={6}
+                      placeholder="Leave your message here — we'll respond shortly." 
                       className="w-full bg-white border border-slate-200 focus:border-brand-gold focus:ring-4 focus:ring-brand-gold/5 rounded-xl py-3.5 px-4 text-sm font-semibold text-slate-900 outline-none transition resize-none"
                     />
                   </div>
+
+                  {/* Contact page does not accept resumes — vacancy applications are handled on the Vacancies page. */}
 
                   <button 
                     type="submit"

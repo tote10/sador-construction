@@ -66,6 +66,7 @@ export interface Vacancy {
   description: string;
   postedAt?: string;
   open: boolean;
+  requiredFields?: string[];
 }
 
 export interface ContactSubmission {
@@ -75,6 +76,18 @@ export interface ContactSubmission {
   phone?: string;
   projectType?: string;
   message: string;
+  submittedAt: string;
+  status: 'read' | 'unread';
+}
+
+export interface Applicant {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  roleApplied: string;
+  message?: string;
+  resumeBase64?: string;
   submittedAt: string;
   status: 'read' | 'unread';
 }
@@ -101,6 +114,7 @@ interface AppContextType {
   awards: Award[];
   blogPosts: BlogPost[];
   vacancies: Vacancy[];
+  applicants: Applicant[];
   submissions: ContactSubmission[];
   homepageContent: HomepageContent;
   seoSettings: SEOSettings;
@@ -131,6 +145,8 @@ interface AppContextType {
   addVacancy: (vacancy: Omit<Vacancy, 'id' | 'postedAt'>) => void;
   updateVacancy: (id: string, vacancy: Partial<Vacancy>) => void;
   deleteVacancy: (id: string) => void;
+  addApplicant: (applicant: Omit<Applicant, 'id' | 'submittedAt' | 'status'>) => void;
+  deleteApplicant: (id: string) => void;
   
   submitContact: (submission: Omit<ContactSubmission, 'id' | 'submittedAt' | 'status'>) => void;
   deleteSubmission: (id: string) => void;
@@ -320,6 +336,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [awards, setAwards] = useState<Award[]>([]);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [vacancies, setVacancies] = useState<Vacancy[]>([]);
+  const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [submissions, setSubmissions] = useState<ContactSubmission[]>([]);
   const [homepageContent, setHomepageContent] = useState<HomepageContent>(defaultHomepageContent);
   const [seoSettings, setSEOSettings] = useState<SEOSettings>(defaultSEOSettings);
@@ -357,6 +374,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setAwards(getStored('sador_awards', defaultAwards));
       setBlogPosts(getStored('sador_blog_posts', defaultBlogPosts));
       setVacancies(getStored('sador_vacancies', defaultVacancies));
+      setApplicants(getStored('sador_applicants', []) as Applicant[]);
       setSubmissions(getStored('sador_submissions', [
         {
           id: 'sub-1',
@@ -413,6 +431,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       localStorage.setItem('sador_vacancies', JSON.stringify(vacancies));
     }
   }, [vacancies, loaded]);
+
+  useEffect(() => {
+    if (loaded) {
+      localStorage.setItem('sador_applicants', JSON.stringify(applicants));
+    }
+  }, [applicants, loaded]);
 
   useEffect(() => {
     if (loaded) {
@@ -556,6 +580,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setVacancies(prev => prev.filter(v => v.id !== id));
   };
 
+  // Applicants
+  const addApplicant = (applicantData: Omit<Applicant, 'id' | 'submittedAt' | 'status'>) => {
+    const newApplicant: Applicant = {
+      ...applicantData,
+      id: `app-${Date.now()}`,
+      submittedAt: new Date().toLocaleString(),
+      status: 'unread'
+    } as Applicant;
+    setApplicants(prev => [newApplicant, ...prev]);
+  };
+
+  const deleteApplicant = (id: string) => {
+    setApplicants(prev => prev.filter(a => a.id !== id));
+  };
+
   // Submissions operations
   const submitContact = (contactData: Omit<ContactSubmission, 'id' | 'submittedAt' | 'status'>) => {
     const newSubmission: ContactSubmission = {
@@ -593,6 +632,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         awards,
         blogPosts,
         vacancies,
+        applicants,
         submissions,
         homepageContent,
         seoSettings,
@@ -617,6 +657,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         addVacancy,
         updateVacancy,
         deleteVacancy,
+        addApplicant,
+        deleteApplicant,
         submitContact,
         deleteSubmission,
         markSubmissionRead,

@@ -570,7 +570,7 @@ export default function LandingPage() {
           <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
             
             {/* CTA Left text */}
-            <div className="lg:col-span-5 space-y-8">
+            <div className="lg:col-span-12 space-y-8">
               <div className="space-y-4">
                 <span className="text-xs font-bold tracking-widest text-brand-gold uppercase block">Inquire Now</span>
                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-brand-blue tracking-tight">
@@ -605,101 +605,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* CTA Right Form Card */}
-            <div className="lg:col-span-7 relative">
-              {formSubmitted && (
-                <div className="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-3xl border border-slate-100 flex flex-col items-center justify-center p-8 z-30 text-center animate-fade-in shadow-xl">
-                  <div className="w-16 h-16 bg-brand-gold/15 text-brand-gold rounded-full flex items-center justify-center mb-6">
-                    <CheckCircle size={36} />
-                  </div>
-                  <h3 className="text-2xl font-extrabold text-brand-blue mb-2">Submission Received</h3>
-                  <p className="text-sm text-slate-500 font-medium max-w-sm">
-                    Thank you. Your request has been queued for review and our team will respond shortly.
-                  </p>
-                </div>
-              )}
-
-              <div className="bg-white p-8 sm:p-10 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.02)] border border-slate-100">
-                <h4 className="text-xl font-bold text-brand-blue mb-6">Request Technical Assessment</h4>
-                
-                <form onSubmit={handleFormSubmit} className="space-y-5">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Full Name</label>
-                      <input 
-                        type="text" 
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        required
-                        placeholder="John Doe" 
-                        className="w-full bg-slate-50 border border-slate-200 focus:border-brand-gold focus:bg-white focus:ring-4 focus:ring-brand-gold/5 rounded-xl py-3.5 px-4 text-sm font-semibold text-slate-900 outline-none transition"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Email Address</label>
-                      <input 
-                        type="email" 
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        required
-                        placeholder="email@company.com" 
-                        className="w-full bg-slate-50 border border-slate-200 focus:border-brand-gold focus:bg-white focus:ring-4 focus:ring-brand-gold/5 rounded-xl py-3.5 px-4 text-sm font-semibold text-slate-900 outline-none transition"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Phone Number</label>
-                      <input 
-                        type="text" 
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        placeholder="+251 900 000 000" 
-                        className="w-full bg-slate-50 border border-slate-200 focus:border-brand-gold focus:bg-white focus:ring-4 focus:ring-brand-gold/5 rounded-xl py-3.5 px-4 text-sm font-semibold text-slate-900 outline-none transition"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Project Class</label>
-                      <select 
-                        name="projectType"
-                        value={formData.projectType}
-                        onChange={handleInputChange}
-                        className="w-full bg-slate-50 border border-slate-200 focus:border-brand-gold focus:bg-white focus:ring-4 focus:ring-brand-gold/5 rounded-xl py-3.5 px-4 text-sm font-semibold text-slate-900 outline-none transition cursor-pointer"
-                      >
-                        <option value="Building">Building Construction</option>
-                        <option value="Road">Road & Civil Works</option>
-                        <option value="Infrastructure">Civil Infrastructure</option>
-                        <option value="Other">Other Construction</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Scope Description</label>
-                    <textarea 
-                      name="message"
-                      value={formData.message}
-                      onChange={handleInputChange}
-                      required
-                      rows={4}
-                      placeholder="Specify project location, estimated area, duration target, and special civil requirements..." 
-                      className="w-full bg-slate-50 border border-slate-200 focus:border-brand-gold focus:bg-white focus:ring-4 focus:ring-brand-gold/5 rounded-xl py-3.5 px-4 text-sm font-semibold text-slate-900 outline-none transition resize-none"
-                    />
-                  </div>
-
-                  <button 
-                    type="submit"
-                    className="w-full py-4 bg-brand-blue hover:bg-brand-blue/90 border border-transparent font-bold text-white hover:text-brand-gold rounded-xl transition duration-300 shadow-md shadow-brand-blue/15 hover:shadow-brand-blue/30 active:scale-[0.99] outline-none"
-                  >
-                    Submit RFP Parameters
-                  </button>
-                </form>
-              </div>
-            </div>
+            {/* Right form removed per request */}
 
           </div>
         </section>
