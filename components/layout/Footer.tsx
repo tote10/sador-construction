@@ -11,7 +11,8 @@ import logoImage from '../../image.png';
 
 export function Footer() {
   const pathname = usePathname();
-  const { services } = useApp();
+  const app = useApp() as any;
+  const services = Array.isArray(app?.services) ? app.services : [];
   const [currentYear, setCurrentYear] = useState('');
 
   useEffect(() => {
@@ -87,7 +88,7 @@ export function Footer() {
           <div className="lg:col-span-2 space-y-6">
             <h4 className="text-white font-bold text-base tracking-wider uppercase">Services</h4>
             <div className="flex flex-col gap-4">
-              {services.map(service => (
+              {services.map((service: any) => (
                 <Link 
                   key={service.id}
                   href="/services" 

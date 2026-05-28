@@ -3,47 +3,53 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Building2, Lock, Eye, EyeOff, ShieldCheck, AlertCircle, ArrowLeft } from 'lucide-react';
-import { useApp } from '@/lib/state/AppContext';
+import { Building2, Lock, Eye, EyeOff, ShieldCheck, AlertCircle, ArrowLeft, Mail } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 export default function LoginPage() {
-  const { isLoggedIn, login } = useApp();
   const router = useRouter();
 
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Redirect if already logged in
+  // Check if we are already logged in according to Supabase
   useEffect(() => {
-    if (isLoggedIn) {
-      router.push('/dashboard');
-    }
-  }, [isLoggedIn, router]);
+    const checkSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        router.push('/dashboard');
+      }
+    };
+    checkSession();
+  }, [router]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     
-    if (!password) {
-      setError('Please enter your administrator access code.');
+    if (!email || !password) {
+      setError('Please enter your email and password.');
       return;
     }
 
     setLoading(true);
 
-    // Simulate network authentication delay
-    setTimeout(() => {
-      const success = login(password);
-      setLoading(false);
-      
-      if (success) {
-        router.push('/dashboard');
-      } else {
-        setError('Invalid administrator passcode. (Try "admin123" or "password")');
-      }
-    }, 800);
+    // Call Supabase Authentication
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    
+    setLoading(false);
+    
+    if (error) {
+      setError(error.message); // Displays wrong password/email error
+    } else {
+      router.push('/dashboard'); // Success!
+    }
   };
 
   return (
@@ -72,7 +78,7 @@ export default function LoginPage() {
             <Building2 size={24} />
           </div>
           <div>
-            <h2 className="text-2xl font-extrabold text-brand-blue">Sador General Construction CMS Console</h2>
+            <h2 className="text-2xl font-extrabold text-brand-blue">Sador General Construction</h2>
             <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">Admin Authentication</p>
           </div>
         </div>
@@ -87,9 +93,24 @@ export default function LoginPage() {
         {/* Access Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
+            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Administrator Email</label>
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                <Mail size={16} />
+              </span>
+              <input 
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="admin@sador.com" 
+                className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 focus:border-brand-gold focus:bg-white rounded-xl text-sm font-semibold text-slate-900 outline-none transition"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Access Passcode</label>
-              <span className="text-[10px] text-slate-400 font-semibold italic">Hint: admin123</span>
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Secure Password</label>
             </div>
             
             <div className="relative">
@@ -121,12 +142,12 @@ export default function LoginPage() {
             {loading ? (
               <>
                 <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>Authenticating Console...</span>
+                <span>Authenticating...</span>
               </>
             ) : (
               <>
                 <ShieldCheck size={18} />
-                <span>Unlock Dashboard</span>
+                <span>Login</span>
               </>
             )}
           </button>

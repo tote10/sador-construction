@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useApp } from '@/lib/state/AppContext';
 import { 
@@ -9,7 +10,9 @@ import {
 } from 'lucide-react';
 
 export default function DashboardPage() {
-  const { projects, services, testimonials, submissions } = useApp();
+  const { projects, services, testimonials, submissions = [] } = useApp();
+  const { logout } = useApp();
+  const router = useRouter();
 
   // Compute stats
   const totalProjects = projects.length;
@@ -52,6 +55,12 @@ export default function DashboardPage() {
           >
             Review Projects
           </Link>
+          <button
+            onClick={async () => { await logout(); router.push('/'); }}
+            className="px-5 py-2.5 bg-white/90 text-slate-700 font-bold rounded-xl text-xs uppercase tracking-wider hover:bg-slate-100 transition border border-slate-100"
+          >
+            Logout
+          </button>
         </div>
       </div>
 
