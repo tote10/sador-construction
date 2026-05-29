@@ -5,12 +5,16 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 export const hasSupabaseServerConfig = !!(supabaseUrl && (supabaseServiceKey || supabaseAnonKey));
+export const hasSupabaseServiceRole = !!(supabaseUrl && supabaseServiceKey);
 
 let _client: ReturnType<typeof createClient> | null = null;
 
 if (supabaseUrl && supabaseServiceKey) {
   _client = createClient(supabaseUrl, supabaseServiceKey, { auth: { persistSession: false } });
+} else if (supabaseUrl && supabaseAnonKey) {
+  _client = createClient(supabaseUrl, supabaseAnonKey, { auth: { persistSession: false } });
 }
+
 
 export function createSupabaseServerClient(accessToken?: string) {
   if (supabaseUrl && supabaseServiceKey) {
@@ -29,6 +33,14 @@ export function createSupabaseServerClient(accessToken?: string) {
 
 export function getSupabaseServerClient(accessToken?: string) {
   return accessToken ? createSupabaseServerClient(accessToken) : _client;
+}
+
+export function getSupabaseServiceRoleClient() {
+  if (supabaseUrl && supabaseServiceKey) {
+    return createClient(supabaseUrl, supabaseServiceKey, { auth: { persistSession: false } });
+  }
+
+  return null;
 }
 
 export const supabaseServer = _client as any;

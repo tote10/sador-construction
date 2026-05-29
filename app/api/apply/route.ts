@@ -8,7 +8,7 @@ export async function POST(req: Request) {
   try {
     const supabaseServer = getSupabaseServerClient();
     if (!supabaseServer) {
-      return NextResponse.json({ error: 'Missing SUPABASE env vars (NEXT_PUBLIC_SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY)' }, { status: 503 });
+      return NextResponse.json({ error: 'Missing Supabase env vars (NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY or SUPABASE_SERVICE_ROLE_KEY).' }, { status: 503 });
     }
 
     const form = await req.formData();
@@ -50,7 +50,15 @@ export async function POST(req: Request) {
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json(
+        {
+          error: error.message || 'Application submission failed.',
+          code: error.code ?? null,
+          details: error.details ?? null,
+          hint: error.hint ?? null,
+        },
+        { status: 500 },
+      );
     }
 
     return NextResponse.json({ ok: true, applicant: data, resume_path: resumePath }, { status: 201 });

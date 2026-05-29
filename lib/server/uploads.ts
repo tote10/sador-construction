@@ -22,7 +22,7 @@ export async function uploadResumeFile(file: File, applicantId?: string) {
 
   const supabaseServer = getSupabaseServerClient();
   if (!supabaseServer) {
-    throw new Error('Missing SUPABASE env vars (NEXT_PUBLIC_SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY)');
+    throw new Error('Missing Supabase env vars (NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY or SUPABASE_SERVICE_ROLE_KEY).');
   }
 
   const safeApplicantId = applicantId?.trim() || crypto.randomUUID();

@@ -3,6 +3,16 @@ import { supabase } from '@/lib/supabase';
 
 export const revalidate = 0;
 
+const mapHomepage = (row: any) => ({
+  ...(row ?? {}),
+  heroTitle: row?.hero_title ?? row?.heroTitle ?? '',
+  heroSubtitle: row?.hero_subtitle ?? row?.heroSubtitle ?? '',
+  yearsOfExperience: row?.years_of_experience ?? row?.yearsOfExperience ?? 0,
+  projectsDone: row?.projects_done ?? row?.projectsDone ?? 0,
+  happyClients: row?.happy_clients ?? row?.happyClients ?? 0,
+  activeStaff: row?.active_staff ?? row?.activeStaff ?? 0,
+});
+
 export default async function HomePage() {
   try {
     const [projectsRes, servicesRes, testimonialsRes, homepageRes, seoRes] = await Promise.all([
@@ -19,7 +29,7 @@ export default async function HomePage() {
     const projectsRows = projectsRes.data ?? [];
     const servicesRows = servicesRes.data ?? [];
     const testimonialsRows = testimonialsRes.data ?? [];
-    const homepageRow = (homepageRes.data && homepageRes.data[0]) ?? null;
+    const homepageRow = mapHomepage((homepageRes.data && homepageRes.data[0]) ?? null);
     const seoRow = (seoRes.data && seoRes.data[0]) ?? null;
 
     const projects = (projectsRows || []).map((r: any) => ({

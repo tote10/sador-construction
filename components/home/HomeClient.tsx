@@ -167,6 +167,46 @@ export default function HomeClient({ projects = [], services = [], testimonials 
           </div>
         </section>
 
+        {topServices.length > 0 && (
+          <section className="py-24 px-6 bg-white border-b border-slate-100">
+            <div className="max-w-7xl mx-auto space-y-14">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div className="space-y-4 max-w-2xl">
+                  <span className="text-xs font-bold tracking-widest text-brand-gold uppercase block">What We Do</span>
+                  <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-brand-blue tracking-tight">
+                    Core Services
+                  </h2>
+                  <p className="text-sm sm:text-base text-slate-500 font-medium leading-relaxed">
+                    Services are kept simple and visible so clients can quickly understand the work we take on.
+                  </p>
+                </div>
+                <div>
+                  <Link href="/services" className="inline-flex items-center gap-2 px-6 py-3 bg-brand-blue text-white rounded-xl font-bold text-sm transition-all hover:bg-brand-blue/90 shadow-sm hover:shadow-md">
+                    View Services
+                    <ArrowRight size={16} />
+                  </Link>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {topServices.map((service: any, index: number) => (
+                  <div key={service.id || index} className="group rounded-3xl border border-slate-100 bg-brand-light p-7 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+                    <div className="w-14 h-14 rounded-2xl bg-white border border-slate-100 flex items-center justify-center mb-5 shadow-sm">
+                      {getServiceIcon(service.iconName || service.icon_name)}
+                    </div>
+                    <h3 className="text-xl font-extrabold text-brand-blue mb-3">{service.title}</h3>
+                    <p className="text-sm text-slate-600 leading-relaxed mb-5">{service.description}</p>
+                    <Link href="/services" className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-widest text-brand-gold group-hover:text-brand-blue transition-colors">
+                      Learn more
+                      <ArrowRight size={14} />
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* FEATURED PROJECTS */}
         <section className="py-24 px-6 bg-brand-light border-y border-slate-100">
           <div className="max-w-7xl mx-auto space-y-16">

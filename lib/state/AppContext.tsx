@@ -26,6 +26,13 @@ const mapTestimonial = (row: any) => ({
   note: row?.note ?? '',
 });
 
+const mapService = (row: any) => ({
+  ...row,
+  iconName: row?.icon_name ?? row?.iconName ?? 'Building2',
+  details: row?.details ?? [],
+  sort_order: row?.sort_order ?? row?.sortOrder ?? 0,
+});
+
 const mapHomepage = (row: any) => ({
   ...(row ?? {}),
   heroTitle: row?.hero_title ?? row?.heroTitle ?? '',
@@ -54,6 +61,8 @@ interface AppContextType {
   addProject: (p: any) => Promise<void>;
   updateProject: (id: string, patch: any) => Promise<void>;
   deleteProject: (id: string) => Promise<void>;
+  addService: (service: any) => Promise<void>;
+  deleteService: (id: string) => Promise<void>;
   addTestimonial: (t: any) => Promise<void>;
   deleteTestimonial: (id: string) => Promise<void>;
   addAward: (a: any) => Promise<void>;
@@ -119,8 +128,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         ]);
 
         setProjects(p ?? []);
-        setServices(s ?? []);
-        setTestimonials((t ?? []).map(mapTestimonial));
+        setServices((s ?? []).map(mapService));
+        // normalize and dedupe testimonials by id
+        const normalized = (t ?? []).map(mapTestimonial);
+        const byId: Record<string, any> = {};
+        normalized.forEach((r: any) => {
+          if (r && r.id) byId[String(r.id)] = r;
+        });
+        setTestimonials(Object.values(byId));
         setAwards(a ?? []);
         setBlogPosts(b ?? []);
         setVacancies(v ?? []);
@@ -170,10 +185,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         if (res.status !== 503) throw new Error(json?.error ?? 'Insert failed');
 
         // ensure slug exists to satisfy DB not-null constraint
-        const payloadWithSlug = {
+        const payloadWithSlug: any = {
           ...p,
           slug: (typeof p.title === 'string' ? String(p.title).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') : undefined) || undefined,
         };
+        if (payloadWithSlug.clientName !== undefined) {
+          payloadWithSlug.client_name = payloadWithSlug.clientName;
+          delete payloadWithSlug.clientName;
+        }
 
         const { data, error } = await supabase.from('projects').insert(payloadWithSlug).select();
         if (error) throw new Error(error.message ?? 'Insert failed');
@@ -196,6 +215,33 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const { error } = await supabase.from('projects').delete().eq('id', id);
     if (error) throw error;
     setProjects(prev => prev.filter(x => x.id !== id));
+  };
+
+  const addService = async (service: any) => {
+    const slug = String(service.title ?? '')
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+
+    const payload: any = {
+      title: service.title,
+      slug,
+      description: service.description,
+      icon_name: service.iconName || service.icon_name || 'Building2',
+      details: service.details || [],
+      sort_order: Number(service.sort_order ?? service.sortOrder ?? 0),
+    };
+
+    const { data, error } = await supabase.from('services').insert(payload).select();
+    if (error) throw error;
+    setServices(prev => [...prev, ...((data ?? []).map(mapService))]);
+  };
+
+  const deleteService = async (id: string) => {
+    const { error } = await supabase.from('services').delete().eq('id', id);
+    if (error) throw error;
+    setServices(prev => prev.filter(x => x.id !== id));
   };
 
   const addTestimonial = async (t: any) => {
@@ -227,11 +273,27 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
         const { data, error } = await supabase.from('testimonials').insert(payload).select();
         if (error) throw new Error(error.message ?? 'Insert failed');
-        setTestimonials(prev => [...prev, ...((data ?? []).map(mapTestimonial))]);
+        // Merge by id to avoid duplicates from realtime + manual insert
+        const newRows = (data ?? []).map(mapTestimonial);
+        setTestimonials(prev => {
+          const byId: Record<string, any> = {};
+          [...prev, ...newRows].forEach((r: any) => {
+            if (r && r.id) byId[String(r.id)] = r;
+          });
+          return Object.values(byId);
+        });
         return;
       }
 
-      setTestimonials(prev => [...prev, ...((json.data ?? []).map(mapTestimonial))]);
+      // Merge returned rows by id to avoid duplicates
+      const returned = (json.data ?? []).map(mapTestimonial);
+      setTestimonials(prev => {
+        const byId: Record<string, any> = {};
+        [...prev, ...returned].forEach((r: any) => {
+          if (r && r.id) byId[String(r.id)] = r;
+        });
+        return Object.values(byId);
+      });
     } catch (err) {
       console.error('addTestimonial failed', err);
       throw new Error(err instanceof Error ? err.message : String(err));
@@ -244,7 +306,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   };
 
   const addAward = async (a: any) => {
-    const { data, error } = await supabase.from('awards').insert(a).select();
+    const payload: any = { ...a };
+    if (payload.image) {
+      payload.image_url = payload.image;
+    } else if (payload.image_url) {
+      payload.image = payload.image_url;
+    }
+    const { data, error } = await supabase.from('awards').insert(payload).select();
     if (error) throw error;
     setAwards(prev => [...prev, ...(data ?? [])]);
   };
@@ -254,13 +322,35 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setAwards(prev => prev.filter(x => x.id !== id));
   };
 
+  const vacancyToDb = (v: any) => {
+    const out: any = { ...v };
+    if (v.employmentType !== undefined) {
+      out.employment_type = v.employmentType;
+      delete out.employmentType;
+    }
+    if (v.postedAt !== undefined) {
+      out.posted_at = v.postedAt;
+      delete out.postedAt;
+    }
+    if (v.requiredFields !== undefined) {
+      out.required_fields = v.requiredFields;
+      delete out.requiredFields;
+    }
+    if (v.status !== undefined) {
+      out.status = String(v.status).toLowerCase();
+    }
+    return out;
+  };
+
   const addVacancy = async (v: any) => {
-    const { data, error } = await supabase.from('vacancies').insert(v).select();
+    const payload = vacancyToDb(v);
+    const { data, error } = await supabase.from('vacancies').insert(payload).select();
     if (error) throw error;
     setVacancies(prev => [...prev, ...(data ?? [])]);
   };
   const updateVacancy = async (id: string, patch: any) => {
-    const { data, error } = await supabase.from('vacancies').update(patch).eq('id', id).select();
+    const payload = vacancyToDb(patch);
+    const { data, error } = await supabase.from('vacancies').update(payload).eq('id', id).select();
     if (error) throw error;
     setVacancies(prev => prev.map(x => (x.id === id ? { ...x, ...(data?.[0] ?? {}) } : x)));
   };
@@ -277,12 +367,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '');
 
-    const payload = {
+    const payload: any = {
       ...post,
       slug,
       status: post?.published ? 'published' : 'draft',
       published_at: post?.published ? new Date().toISOString() : null,
     };
+    delete payload.published;
 
     const { data, error } = await supabase.from('blog_posts').insert(payload).select();
     if (error) throw error;
@@ -344,6 +435,17 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         if (patch.happyClients !== undefined) snake.happy_clients = patch.happyClients;
         if (patch.activeStaff !== undefined) snake.active_staff = patch.activeStaff;
 
+        // Prefer updating seeded row with id=1 when present
+        try {
+          const { data: updated, error: updateErr } = await supabase.from('homepage_content').update(snake).eq('id', 1).select().single();
+          if (!updateErr && updated) {
+            setHomepageContent(mapHomepage(updated));
+            return;
+          }
+        } catch (e) {
+          // ignore and fallback to general behavior
+        }
+
         if (!homepageContent || !homepageContent.id) {
           const { data, error } = await supabase.from('homepage_content').insert(snake).select().single();
           if (error) throw new Error(error.message ?? 'Save failed');
@@ -380,6 +482,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     addProject,
     updateProject,
     deleteProject,
+    addService,
+    deleteService,
     addTestimonial,
     deleteTestimonial,
     addVacancy,
