@@ -26,9 +26,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Name, email, vacancy, and role are required.' }, { status: 400 });
     }
 
+    const applicantId = crypto.randomUUID();
     let resumePath = '';
     if (resumeValue instanceof File && resumeValue.size > 0) {
-      const applicantId = crypto.randomUUID();
       const uploaded = await uploadResumeFile(resumeValue, applicantId);
       resumePath = uploaded.path;
     } else if (resumeRequired) {
@@ -38,6 +38,7 @@ export async function POST(req: Request) {
     const { data, error } = await supabaseServer
       .from('applicants')
       .insert({
+        id: applicantId,
         vacancy_id: vacancyId,
         role_applied: roleApplied,
         name,
@@ -45,9 +46,7 @@ export async function POST(req: Request) {
         phone: phone || null,
         message: message || null,
         resume_path: resumePath || null,
-      } as any)
-      .select('id')
-      .single();
+      } as any);
 
     if (error) {
       return NextResponse.json(
@@ -61,7 +60,7 @@ export async function POST(req: Request) {
       );
     }
 
-    return NextResponse.json({ ok: true, applicant: data, resume_path: resumePath }, { status: 201 });
+    return NextResponse.json({ ok: true, applicant: { id: applicantId }, resume_path: resumePath }, { status: 201 });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Application submission failed.';
     return NextResponse.json({ error: message }, { status: 500 });

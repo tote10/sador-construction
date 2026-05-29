@@ -30,6 +30,7 @@ export default function DashboardPage() {
     { label: 'Services', desc: 'Add the services shown on the homepage', href: '/dashboard/services', icon: <Building2 className="text-brand-gold" /> },
     { label: 'Homepage', desc: 'Edit hero text and stats', href: '/dashboard/homepage', icon: <Settings className="text-brand-gold" /> },
     { label: 'Testimonials', desc: 'Manage client quotes', href: '/dashboard/testimonials', icon: <MessageSquare className="text-brand-gold" /> },
+      { label: 'Applicants', desc: 'Review job applications', href: '/dashboard/applicants', icon: <Inbox className="text-brand-gold" /> },
     { label: 'Awards', desc: 'Add certificates and honors', href: '/dashboard/awards', icon: <Award className="text-brand-gold" /> },
     { label: 'Posts', desc: 'Create and publish updates', href: '/dashboard/blog', icon: <ArrowRight className="text-brand-gold" /> },
     { label: 'Vacancies', desc: 'Manage open roles', href: '/dashboard/vacancies', icon: <PlusCircle className="text-brand-gold" /> },
