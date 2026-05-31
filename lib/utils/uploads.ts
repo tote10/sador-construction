@@ -43,3 +43,57 @@ export async function uploadResume(file: File, applicantId: string) {
   if (error) throw error;
   return { path: key };
 }
+
+function decodeStoragePath(path: string) {
+  return path.split('/').map(segment => decodeURIComponent(segment)).join('/');
+}
+
+function extractStoragePath(bucket: 'project-images' | 'applicant-resumes', value: string) {
+  if (!value) return '';
+
+  const normalized = value.trim();
+  const marker = `/object/public/${bucket}/`;
+  const markerIndex = normalized.indexOf(marker);
+
+  if (markerIndex >= 0) {
+    return decodeStoragePath(normalized.slice(markerIndex + marker.length));
+  }
+
+  if (normalized.startsWith(`${bucket}/`)) {
+    return decodeStoragePath(normalized.slice(bucket.length + 1));
+  }
+
+  if (normalized.startsWith('resumes/')) {
+    return decodeStoragePath(normalized);
+  }
+
+  return '';
+}
+
+async function deleteStorageObject(bucket: 'project-images' | 'applicant-resumes', path: string) {
+  const cleanPath = path.trim();
+  if (!cleanPath) return;
+
+  const { error } = await supabase.storage.from(bucket).remove([cleanPath]);
+  if (error) throw error;
+}
+
+export async function deleteProjectImage(value: string) {
+  const path = extractStoragePath('project-images', value);
+  if (!path) return;
+  await deleteStorageObject('project-images', path);
+}
+
+export async function deleteProjectImages(values: string[] = []) {
+  const paths = Array.from(new Set(values.map(value => extractStoragePath('project-images', value)).filter(Boolean)));
+  if (paths.length === 0) return;
+
+  const { error } = await supabase.storage.from('project-images').remove(paths);
+  if (error) throw error;
+}
+
+export async function deleteApplicantResume(value: string) {
+  const path = extractStoragePath('applicant-resumes', value);
+  if (!path) return;
+  await deleteStorageObject('applicant-resumes', path);
+}

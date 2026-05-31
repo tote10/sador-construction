@@ -19,7 +19,6 @@ export async function POST(req: Request) {
       quote: body.quote,
       rating: Number(body.rating) || 5,
       image_url: body.image || null,
-      note: body.note || null,
       visible: true,
     };
 

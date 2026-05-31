@@ -11,9 +11,9 @@ import AwardsSlider from '@/components/ui/AwardsSlider';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { FloatingCallButton } from '@/components/layout/FloatingCallButton';
-import { COMPANY } from '@/lib/constants';
+import { COMPANY, HERO_IMAGE_SRC } from '@/lib/constants';
 
-export default function HomeClient({ projects = [], services = [], testimonials = [], homepageContent = {}, seoSettings = {}, heroImageSrc }: any) {
+export default function HomeClient({ projects = [], services = [], testimonials = [], homepageContent = {}, seoSettings = {} }: any) {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
 
   useEffect(() => {
@@ -32,6 +32,7 @@ export default function HomeClient({ projects = [], services = [], testimonials 
   const featuredProjects = (projects || []).filter((p: any) => p.featured);
   const topServices = (services || []).slice(0, 3);
   const heroWords = (homepageContent?.heroTitle || '').split(' ');
+  const heroImageUrl = HERO_IMAGE_SRC;
 
   const getServiceIcon = (iconName: string) => {
     switch (iconName) {
@@ -52,9 +53,9 @@ export default function HomeClient({ projects = [], services = [], testimonials 
         <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-slate-900 text-white py-20 px-6">
           <div className="absolute inset-0 z-0">
             <div className="absolute inset-0 bg-brand-blue/85 mix-blend-multiply z-10" />
-            {heroImageSrc ? (
+            {heroImageUrl ? (
               <Image
-                src={heroImageSrc}
+                src={heroImageUrl}
                 alt="Heavy Civil Engineering"
                 fill
                 priority
@@ -272,40 +273,89 @@ export default function HomeClient({ projects = [], services = [], testimonials 
         {testimonials.length > 0 && (
           <section className="py-24 px-6 bg-white overflow-hidden relative border-b border-slate-100">
             <div className="absolute top-1/2 left-10 -translate-y-1/2 w-48 h-48 bg-brand-gold/5 rounded-full blur-3xl pointer-events-none" />
-            <div className="max-w-4xl mx-auto space-y-10 relative z-10 text-center">
+            <div className="max-w-4xl mx-auto space-y-8 relative z-10">
               <span className="text-xs font-bold tracking-widest text-brand-gold uppercase block">Testimonials</span>
-              <div className="w-16 h-16 rounded-2xl bg-brand-light flex items-center justify-center mx-auto text-brand-gold shadow-sm border border-slate-100">
-                <MessageSquare size={28} />
-              </div>
-              <div className="relative min-h-[180px] flex items-center justify-center px-4">
-                {testimonials.map((test: any, index: number) => (
-                  <div key={test.id || index} className={`space-y-6 transition-all duration-500 absolute w-full ${index === activeTestimonial ? 'opacity-100 scale-100 relative' : 'opacity-0 scale-95 pointer-events-none'}`}>
-                    <div className="flex justify-center gap-1">
-                      {Array.from({ length: test.rating || 0 }).map((_, i) => (
-                        <Star key={i} size={16} className="fill-brand-gold text-brand-gold" />
-                      ))}
-                    </div>
-                    <blockquote className="text-xl sm:text-2xl font-medium text-slate-700 leading-relaxed max-w-2xl mx-auto italic">"{test.quote}"</blockquote>
-                    {test.image && (
-                      <div className="relative mx-auto w-20 h-20 rounded-full overflow-hidden border-2 border-brand-gold/40 shadow-sm">
-                        <Image src={test.image} alt={test.clientName} fill sizes="80px" className="object-cover" />
+              <div className="relative rounded-[2rem] border border-slate-100 bg-white shadow-[0_18px_50px_rgba(15,41,66,0.08)] overflow-hidden">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(212,175,55,0.12),transparent_35%),linear-gradient(180deg,rgba(248,250,252,0.78),rgba(255,255,255,1))]" />
+                <div className="relative p-5 sm:p-8 lg:p-10">
+                  {testimonials.map((test: any, index: number) => {
+                    const isActive = index === activeTestimonial;
+                    const initials = (test.clientName || 'Client')
+                      .split(' ')
+                      .map((part: string) => part[0])
+                      .join('')
+                      .slice(0, 2)
+                      .toUpperCase();
+
+                    return (
+                      <div key={test.id || index} className={`transition-all duration-500 ${isActive ? 'opacity-100 relative translate-y-0' : 'absolute inset-0 opacity-0 translate-y-4 pointer-events-none'}`}>
+                        <div className="mx-auto max-w-3xl space-y-6 text-center">
+                          <div className="flex flex-col items-center gap-4">
+                            {test.image ? (
+                              <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-[1.5rem] overflow-hidden border-4 border-white shadow-xl ring-1 ring-slate-100">
+                                <Image src={test.image} alt={test.clientName} fill sizes="112px" className="object-cover" />
+                              </div>
+                            ) : (
+                              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-[1.5rem] bg-brand-blue text-white flex items-center justify-center text-3xl font-extrabold shadow-xl ring-1 ring-slate-100">
+                                {initials}
+                              </div>
+                            )}
+
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-light text-brand-blue text-xs font-bold uppercase tracking-widest">
+                              <MessageSquare size={14} className="text-brand-gold" />
+                              Client review
+                            </div>
+
+                            <div className="flex flex-wrap justify-center gap-1.5">
+                              {Array.from({ length: Math.max(0, Math.min(5, Number(test.rating) || 0)) }).map((_, i) => (
+                                <Star key={i} size={15} className="fill-brand-gold text-brand-gold" />
+                              ))}
+                            </div>
+                          </div>
+
+                          <blockquote className="text-xl sm:text-2xl lg:text-3xl font-semibold text-slate-700 leading-[1.5] italic">
+                            “{test.quote}”
+                          </blockquote>
+
+                          <div className="space-y-1">
+                            <cite className="font-extrabold text-brand-blue not-italic text-lg sm:text-xl">{test.clientName}</cite>
+                            <div className="text-[11px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest">{test.companyName || 'Verified client'}</div>
+                          </div>
+                        </div>
                       </div>
-                    )}
-                    {test.note && <p className="text-sm text-slate-500 max-w-xl mx-auto">{test.note}</p>}
-                    <div className="flex flex-col items-center">
-                      <cite className="font-extrabold text-brand-blue not-italic text-base sm:text-lg">{test.clientName}</cite>
-                      <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">{test.companyName}</span>
+                    );
+                  })}
+                </div>
+
+                <div className="relative px-5 sm:px-8 lg:px-10 pb-5 sm:pb-8 lg:pb-10 pt-0">
+                  <div className="flex items-center justify-between gap-4 rounded-2xl bg-white border border-slate-100 p-4 sm:p-5 shadow-sm">
+                    <div className="flex items-center gap-3">
+                      <div>
+                        <div className="text-2xl font-extrabold text-brand-blue">{activeTestimonial + 1}</div>
+                        <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">of {testimonials.length}</div>
+                      </div>
+                      <div className="h-10 w-px bg-slate-200 hidden sm:block" />
+                      <div className="text-sm text-slate-500 hidden sm:block">Use the arrows to change the review</div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => setActiveTestimonial(prev => (prev - 1 + testimonials.length) % testimonials.length)} className="w-11 h-11 rounded-xl border border-slate-200 bg-white flex items-center justify-center hover:bg-slate-50 transition" aria-label="Previous testimonial"><ChevronLeft size={18} /></button>
+                      <button onClick={() => setActiveTestimonial(prev => (prev + 1) % testimonials.length)} className="w-11 h-11 rounded-xl border border-slate-200 bg-white flex items-center justify-center hover:bg-slate-50 transition" aria-label="Next testimonial"><ChevronRight size={18} /></button>
                     </div>
                   </div>
-                ))}
-              </div>
-              {testimonials.length > 1 && (
-                <div className="flex justify-center items-center gap-4 pt-6">
-                  <button onClick={() => setActiveTestimonial(prev => (prev - 1 + testimonials.length) % testimonials.length)} className="w-11 h-11 border border-slate-200 rounded-xl flex items-center justify-center hover:bg-slate-50 hover:border-brand-blue transition text-brand-blue" aria-label="Previous testimonial"><ChevronLeft size={18} /></button>
-                  <span className="text-xs font-semibold text-slate-400">{activeTestimonial + 1} / {testimonials.length}</span>
-                  <button onClick={() => setActiveTestimonial(prev => (prev + 1) % testimonials.length)} className="w-11 h-11 border border-slate-200 rounded-xl flex items-center justify-center hover:bg-slate-50 hover:border-brand-blue transition text-brand-blue" aria-label="Next testimonial"><ChevronRight size={18} /></button>
+
+                  <div className="mt-4 flex justify-center gap-2">
+                    {testimonials.map((_test: any, index: number) => (
+                      <button
+                        key={index}
+                        onClick={() => setActiveTestimonial(index)}
+                        className={`h-2.5 rounded-full transition-all ${index === activeTestimonial ? 'w-8 bg-brand-gold' : 'w-2.5 bg-slate-300 hover:bg-slate-400'}`}
+                        aria-label={`Go to testimonial ${index + 1}`}
+                      />
+                    ))}
+                  </div>
                 </div>
-              )}
+              </div>
             </div>
           </section>
         )}

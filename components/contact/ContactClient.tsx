@@ -7,10 +7,11 @@ import { Footer } from '@/components/layout/Footer';
 import { FloatingCallButton } from '@/components/layout/FloatingCallButton';
 import { useApp } from '@/lib/state/AppContext';
 import { COMPANY } from '@/lib/constants';
-import { Phone, Mail, MapPin, CheckCircle, Clock, Send, Compass, Info, HelpCircle } from 'lucide-react';
+import { Phone, Mail, MapPin, CheckCircle, Clock, Send } from 'lucide-react';
 
 export default function ContactClient({ seoSettings }: any) {
   const { submitContact } = useApp();
+  const officeMapUrl = `https://www.google.com/maps?q=${encodeURIComponent(COMPANY.address)}&output=embed`;
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -20,18 +21,6 @@ export default function ContactClient({ seoSettings }: any) {
 
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
-  const [activePin, setActivePin] = useState<{ id: string; name: string; project: string } | null>({
-    id: 'addis',
-    name: 'Addis Ababa (HQ)',
-    project: 'Bole Highway Expansion & Civil Offices'
-  });
-
-  const mapPins = [
-    { id: 'addis', cx: 120, cy: 120, name: 'Addis Ababa (HQ)', project: 'Bole Highway Expansion & Civil Offices' },
-    { id: 'jimma', cx: 80, cy: 150, name: 'Jimma Office', project: 'Jimma University Hospital Wing' },
-    { id: 'hawassa', cx: 130, cy: 180, name: 'Hawassa Site', project: 'Industrial Park Phase II Expansion' },
-    { id: 'zeway', cx: 125, cy: 152, name: 'Zeway Station', project: '50MW Solar Substation Foundations' }
-  ];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -160,59 +149,42 @@ export default function ContactClient({ seoSettings }: any) {
         <section className="py-24 px-6 bg-brand-light border-t border-slate-100">
           <div className="max-w-7xl mx-auto space-y-16">
             <div className="text-center max-w-2xl mx-auto space-y-4">
-              <span className="text-xs font-bold tracking-widest text-brand-gold uppercase block">National Footprint</span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-brand-blue tracking-tight">Active Project Locations</h2>
-              <p className="text-sm text-slate-500 font-semibold">Click on the animated radar markers on the map of Ethiopia below to inspect regional developments.</p>
+              <span className="text-xs font-bold tracking-widest text-brand-gold uppercase block">Office Location</span>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-brand-blue tracking-tight">Find Our Addis Ababa Office</h2>
+              <p className="text-sm text-slate-500 font-semibold">Visit us at the exact office address shown below, or open the map for directions.</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center bg-white p-8 sm:p-12 rounded-[2.5rem] border border-slate-100 shadow-sm">
-              <div className="lg:col-span-7 flex justify-center bg-slate-50 rounded-2xl p-4 border border-slate-100 relative min-h-[300px]">
-                <svg viewBox="0 0 250 250" className="w-full max-w-[380px] h-auto drop-shadow-[0_10px_20px_rgba(0,0,0,0.02)]">
-                  <path d="M 50,70 L 110,40 L 170,55 L 210,110 L 220,160 L 180,180 L 140,210 L 90,195 L 60,170 L 40,115 Z" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  <path d="M 110,40 L 125,152 Z" stroke="#e2e8f0" strokeDasharray="3,3" />
-                  <path d="M 80,150 L 120,120 Z" stroke="#e2e8f0" strokeDasharray="3,3" />
-                  <path d="M 120,120 L 130,180 Z" stroke="#e2e8f0" strokeDasharray="3,3" />
-
-                  {mapPins.map(pin => {
-                    const isActive = activePin?.id === pin.id;
-                    return (
-                      <g key={pin.id} onClick={() => setActivePin(pin)} className="cursor-pointer group">
-                        <circle cx={pin.cx} cy={pin.cy} r={isActive ? 8 : 4} fill={isActive ? '#b48a55' : '#0f2942'} className="opacity-45 animate-ping" style={{ transformOrigin: `${pin.cx}px ${pin.cy}px` }} />
-                        <circle cx={pin.cx} cy={pin.cy} r={isActive ? 5 : 3.5} fill={isActive ? '#b48a55' : '#0f2942'} className="transition-all duration-300 group-hover:scale-125" style={{ transformOrigin: `${pin.cx}px ${pin.cy}px` }} />
-                      </g>
-                    );
-                  })}
-                </svg>
-                <div className="absolute bottom-4 left-4 flex items-center gap-1.5 text-[10px] font-bold text-slate-400">
-                  <Compass size={12} className="animate-spin-slow" />
-                  <span>SADOR GENERAL CONSTRUCTION LOCATION TRACKER v1.0</span>
+              <div className="lg:col-span-7 space-y-4">
+                <div className="rounded-3xl overflow-hidden border border-slate-200 bg-slate-50 shadow-sm min-h-[320px]">
+                  <iframe
+                    title="Sador General Construction office map"
+                    src={officeMapUrl}
+                    className="w-full h-[360px] sm:h-[420px]"
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
                 </div>
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(COMPANY.address)}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 text-sm font-bold text-brand-blue hover:text-brand-gold transition"
+                >
+                  Open in Google Maps
+                </a>
               </div>
               <div className="lg:col-span-5 space-y-6">
-                <div className="border-b border-slate-100 pb-5">
-                  <h4 className="text-xs font-bold text-brand-gold uppercase tracking-widest flex items-center gap-1.5"><Info size={12} />Location Information</h4>
+                <div className="space-y-3">
+                  <h4 className="text-xs font-bold text-brand-gold uppercase tracking-widest flex items-center gap-1.5"><MapPin size={12} />Office Address</h4>
+                  <p className="text-2xl font-extrabold text-brand-blue leading-tight">{COMPANY.address}</p>
+                  <p className="text-sm text-slate-500 font-semibold leading-relaxed">This is our current office location in Addis Ababa for meetings, coordination, and project discussions.</p>
                 </div>
 
-                {activePin ? (
-                  <div className="space-y-4 animate-fade-in">
-                    <div>
-                      <h3 className="text-2xl font-extrabold text-brand-blue">{activePin.name}</h3>
-                      <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-0.5">Sador General Construction Active Zone</p>
-                    </div>
-
-                    <div className="bg-brand-light p-5 rounded-2xl border border-slate-100 space-y-2">
-                      <h5 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Signature Structural Works</h5>
-                      <p className="text-slate-700 font-bold text-sm leading-snug">{activePin.project}</p>
-                    </div>
-
-                    <p className="text-xs text-slate-500 font-semibold leading-relaxed">Sador General Construction maintains field trailers and local logistics networks at this coordinates zone, allowing rapid mobilization of machinery and raw supplies.</p>
-                  </div>
-                ) : (
-                  <div className="py-8 text-center text-slate-400 flex flex-col items-center justify-center gap-3">
-                    <HelpCircle size={32} className="text-slate-300" />
-                    <p className="text-xs font-semibold">Select any radar pin on the map of Ethiopia to inspect regional construction parameters.</p>
-                  </div>
-                )}
+                <div className="bg-brand-light p-5 rounded-2xl border border-slate-100 space-y-3">
+                  <h5 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Need directions?</h5>
+                  <p className="text-slate-700 font-bold text-sm leading-snug">Use the embedded map or open Google Maps for turn-by-turn navigation to our office.</p>
+                </div>
               </div>
             </div>
           </div>

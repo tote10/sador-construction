@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
+import { deleteApplicantResume, deleteProjectImages, deleteProjectImage } from '@/lib/utils/uploads';
 
 const mapSubmission = (row: any) => ({
   ...row,
@@ -37,6 +38,8 @@ const mapHomepage = (row: any) => ({
   ...(row ?? {}),
   heroTitle: row?.hero_title ?? row?.heroTitle ?? '',
   heroSubtitle: row?.hero_subtitle ?? row?.heroSubtitle ?? '',
+  heroImageUrl: row?.hero_image_url ?? row?.heroImageUrl ?? '',
+  heroVideoUrl: row?.hero_video_url ?? row?.heroVideoUrl ?? '',
   yearsOfExperience: row?.years_of_experience ?? row?.yearsOfExperience ?? 0,
   projectsDone: row?.projects_done ?? row?.projectsDone ?? 0,
   happyClients: row?.happy_clients ?? row?.happyClients ?? 0,
@@ -212,6 +215,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setProjects(prev => prev.map(x => (x.id === id ? { ...x, ...(data?.[0] ?? {}) } : x)));
   };
   const deleteProject = async (id: string) => {
+    const project = projects.find(x => x.id === id);
+    if (project?.images?.length) {
+      await deleteProjectImages(project.images);
+    }
     const { error } = await supabase.from('projects').delete().eq('id', id);
     if (error) throw error;
     setProjects(prev => prev.filter(x => x.id !== id));
@@ -267,7 +274,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           quote: t.quote,
           rating: Number(t.rating) || 5,
           image_url: t.image || null,
-          note: t.note || null,
           visible: true,
         };
 
@@ -300,6 +306,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
   const deleteTestimonial = async (id: string) => {
+    const testimonial = testimonials.find(x => x.id === id);
+    if (testimonial?.image) {
+      await deleteProjectImage(testimonial.image);
+    }
     const { error } = await supabase.from('testimonials').delete().eq('id', id);
     if (error) throw error;
     setTestimonials(prev => prev.filter(x => x.id !== id));
@@ -317,6 +327,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setAwards(prev => [...prev, ...(data ?? [])]);
   };
   const deleteAward = async (id: string) => {
+    const award = awards.find(x => x.id === id);
+    if (award?.image || award?.image_url) {
+      await deleteProjectImage(award.image || award.image_url);
+    }
     const { error } = await supabase.from('awards').delete().eq('id', id);
     if (error) throw error;
     setAwards(prev => prev.filter(x => x.id !== id));
@@ -399,6 +413,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   };
 
   const deleteApplicant = async (id: string) => {
+    const applicant = applicants.find(x => x.id === id);
+    if (applicant?.resumeBase64) {
+      await deleteApplicantResume(applicant.resumeBase64);
+    }
     const { error } = await supabase.from('applicants').delete().eq('id', id);
     if (error) throw error;
     setApplicants(prev => prev.filter(x => x.id !== id));

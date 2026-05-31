@@ -7,6 +7,8 @@ const mapHomepage = (row: any) => ({
   ...(row ?? {}),
   heroTitle: row?.hero_title ?? row?.heroTitle ?? '',
   heroSubtitle: row?.hero_subtitle ?? row?.heroSubtitle ?? '',
+  heroImageUrl: row?.hero_image_url ?? row?.heroImageUrl ?? '',
+  heroVideoUrl: row?.hero_video_url ?? row?.heroVideoUrl ?? '',
   yearsOfExperience: row?.years_of_experience ?? row?.yearsOfExperience ?? 0,
   projectsDone: row?.projects_done ?? row?.projectsDone ?? 0,
   happyClients: row?.happy_clients ?? row?.happyClients ?? 0,
@@ -70,7 +72,7 @@ export default async function HomePage() {
       note: t.note ?? null,
     }));
 
-    return <HomeClient projects={projects} services={services} testimonials={testimonials} homepageContent={homepageRow} seoSettings={seoRow} heroImageSrc="/company/home-hero.jpg" />;
+    return <HomeClient projects={projects} services={services} testimonials={testimonials} homepageContent={homepageRow} seoSettings={seoRow} />;
   } catch (err: any) {
     return <p className="text-center text-red-500">Could not load homepage: {err?.message ?? String(err)}</p>;
   }

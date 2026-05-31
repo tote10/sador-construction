@@ -51,7 +51,7 @@ export default function HomepageAdminPage() {
         <div className="space-y-2">
           <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-brand-gold"><ChevronLeft size={14} /> Homepage CMS</div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-white">Homepage Copy</h2>
-          <p className="text-sm text-slate-300 font-medium max-w-2xl">Edit the hero text and live stats, then save them with one button.</p>
+          <p className="text-sm text-slate-300 font-medium max-w-2xl">Edit the hero text, media, and live stats, then save them with one button.</p>
         </div>
         <div className="flex items-center gap-3">
           <Link href="/dashboard" className="px-5 py-2.5 rounded-xl bg-white/90 text-slate-700 font-bold text-sm hover:bg-white transition">Back</Link>
@@ -70,6 +70,13 @@ export default function HomepageAdminPage() {
           <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Hero Subtitle</span>
           <textarea name="heroSubtitle" value={draft?.heroSubtitle ?? ''} onChange={handleChange} className="w-full p-3.5 border border-slate-200 rounded-2xl min-h-32" />
         </label>
+        <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/70 p-4 space-y-2">
+          <h3 className="text-sm font-bold text-brand-blue">Hero media now lives in code</h3>
+          <p className="text-sm text-slate-600 leading-relaxed">
+            Put the homepage image at <span className="font-bold text-slate-900">public/homepage-hero/hero.jpg</span>.
+            If you want a video later, place it at <span className="font-bold text-slate-900">public/homepage-hero/hero.mp4</span>.
+          </p>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <label className="block space-y-2"><span className="text-xs font-bold uppercase tracking-wider text-slate-500">Years</span><input name="yearsOfExperience" type="number" value={draft?.yearsOfExperience ?? 0} onChange={handleChange} className="w-full p-3.5 border border-slate-200 rounded-2xl" /></label>
           <label className="block space-y-2"><span className="text-xs font-bold uppercase tracking-wider text-slate-500">Projects</span><input name="projectsDone" type="number" value={draft?.projectsDone ?? 0} onChange={handleChange} className="w-full p-3.5 border border-slate-200 rounded-2xl" /></label>
