@@ -1,6 +1,6 @@
-Full SRS (Software Requirements Specification) for Sador Construction Website
-Project Name: Sador Construction Official Website
-Client: Sador Construction
+Full SRS (Software Requirements Specification) for Sador General Construction Website
+Project Name: Sador General Construction Official Website
+Client: Sador General Construction
 Type: General Contractor (Buildings, Roads, Infrastructure & Other Civil Works)
 Main Goals:
 

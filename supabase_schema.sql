@@ -5,9 +5,9 @@
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-----------------------------------------------------
+--------------------------------------------------
 -- 1. Table: homepage_content
-----------------------------------------------------
+--------------------------------------------------
 CREATE TABLE IF NOT EXISTS homepage_content (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     hero_title TEXT NOT NULL DEFAULT 'Building the Future of Ethiopia',
